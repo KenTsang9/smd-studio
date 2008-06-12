@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:complexType name="smd-leaf">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="description" type="xs:string"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="cost" type="xs:double" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="smd-relation-item">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="smd" type="smd-type" minOccurs="1"
+					maxOccurs="1" />
+				<xs:element name="leaf" type="smd-leaf" minOccurs="1"
+					maxOccurs="1" />
+			</xs:choice>
+			<xs:element name="is-end" type="xs:boolean" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="smd-type">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="relation" type="smd-relation" />
+				<xs:element name="smd" type="smd-type" />
+				<xs:element name="leaf" type="smd-leaf" />
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="smd-relation">
+		<xs:sequence>
+			<xs:element name="item" type="smd-relation-item"
+				minOccurs="2" maxOccurs="2" />
+			<xs:element name="cost" type="xs:double" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="smd" type="smd-type" />
+
+</xs:schema>
