@@ -6,9 +6,9 @@ package uk.ac.shef.dcs.smdStudio.domain;
  * <p>
  * The following features are supported:
  * <ul>
- * <li>{@link uk.ac.shef.dcs.smdStudio.domain.Relation#getFirstItem <em>firstItem</em>}</li>
- * <li>{@link uk.ac.shef.dcs.smdStudio.domain.Relation#getSecondItem <em>secondItem</em>}</li>
- * <li>{@link uk.ac.shef.dcs.smdStudio.domain.Relation#getCost <em>cost</em>}</li>
+ * <li>{@link uk.ac.sheffield.dcs.smdStudio.domain.Relation#getFirstItem <em>firstItem</em>}</li>
+ * <li>{@link uk.ac.sheffield.dcs.smdStudio.domain.Relation#getSecondItem <em>secondItem</em>}</li>
+ * <li>{@link uk.ac.sheffield.dcs.smdStudio.domain.Relation#getCost <em>cost</em>}</li>
  * </ul>
  * </p>
  * 

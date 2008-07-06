@@ -18,7 +18,9 @@ public class ModuleController implements DeletableSMDController {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.shef.dcs.smdStudio.gui.controller.DeletableSMDController#deleteSMD()
+	 * @see
+	 * uk.ac.shef.dcs.smdStudio.gui.controller.DeletableSMDController#deleteSMD
+	 * ()
 	 */
 	@Override
 	public void deleteSMD() {
@@ -29,7 +31,9 @@ public class ModuleController implements DeletableSMDController {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.shef.dcs.smdStudio.gui.controller.SMDController#createNewSMD(uk.ac.shef.dcs.smdStudio.domain.AbstractModule)
+	 * @see
+	 * uk.ac.shef.dcs.smdStudio.gui.controller.SMDController#createNewSMD(uk
+	 * .ac.sheffield.dcs.smdStudio.domain.AbstractModule)
 	 */
 	@Override
 	public void createNewSMD(AbstractModule module) {
@@ -50,7 +54,9 @@ public class ModuleController implements DeletableSMDController {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.shef.dcs.smdStudio.gui.controller.SMDController#updateSMD(uk.ac.shef.dcs.smdStudio.domain.AbstractModule)
+	 * @see
+	 * uk.ac.shef.dcs.smdStudio.gui.controller.SMDController#updateSMD(uk.ac
+	 * .sheffield.dcs.smdStudio.domain.AbstractModule)
 	 */
 	@Override
 	public void updateSMD(AbstractModule module) {

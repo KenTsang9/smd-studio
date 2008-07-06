@@ -13,12 +13,10 @@ public interface SMDController {
 	 */
 	void createNewSMD(AbstractModule module);
 
-
 	/**
 	 * @param module
 	 */
 	void updateSMD(AbstractModule module);
-
 
 	/**
 	 * @return
