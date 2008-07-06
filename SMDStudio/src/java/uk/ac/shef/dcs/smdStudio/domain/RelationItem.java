@@ -11,7 +11,7 @@ package uk.ac.shef.dcs.smdStudio.domain;
  * </ul>
  * </p>
  * 
- * @see uk.ac.shef.dcs.smdStudio.domain.uk.ac.shef.dcs.smdStudio.domainPackage#getSmdRelationItem()
+ * @see uk.ac.sheffield.dcs.smdStudio.domain.uk.ac.shef.dcs.smdStudio.domainPackage#getSmdRelationItem()
  * 
  * @author <a href=mailto:acp07ad@sheffield.ac.uk>Aria Dorri</a>
  * 
