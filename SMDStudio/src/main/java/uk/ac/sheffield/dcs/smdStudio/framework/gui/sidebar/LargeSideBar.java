@@ -36,105 +36,128 @@ import javax.swing.border.MatteBorder;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.DiagramPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.theme.ThemeManager;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
 @SuppressWarnings("serial")
-public class LargeSideBar extends JPanel implements ISideBar
-{
+public class LargeSideBar extends JPanel implements ISideBar {
 
-    public LargeSideBar(DiagramPanel diagramPanel)
-    {
-        super();
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.diagramPanel = diagramPanel;
-        taskPane = new JTaskPane();
-        add(taskPane);
-        this.addElement(this.getSideShortcutMandatoryPanel(), this.getSideBarResourceBundle().getString("title.standardbuttons"));
-        this.addElement(this.getSideToolPanel(), this.getSideBarResourceBundle().getString("title.diagramtools"));
-        this.addElement((Component) this.getSideShortcutOptionalPanel(), this.getSideBarResourceBundle().getString(
-                "title.extendedfunctions"));
-        setBorder(new MatteBorder(0, 1, 0, 0, ThemeManager.getInstance().getTheme().getSIDEBAR_BORDER_COLOR()));
-        fixWidth();
-    }
+	private DiagramPanel diagramPanel;
 
-    private void fixWidth()
-    {
-        JLabel sizer = new JLabel();
-        sizer.setPreferredSize(new Dimension(215, 1));
-        taskPane.add(sizer);
-    }
+	private ResourceBundle resourceBundle;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see uk.ac.sheffield.dcs.smdStudio.framework.plugin.VisitableSideBar#addElement(java.awt.Component, java.lang.String)
-     */
-    public void addElement(final Component c, String title)
-    {
-        JTaskPaneGroup group = new JTaskPaneGroup();
-        group.setFont(group.getFont().deriveFont(Font.PLAIN));
-        group.setTitle(title);
-        group.setLayout(new BorderLayout());
-        group.add(c, BorderLayout.CENTER);
-        taskPane.add(group);
-    }
+	private SideShortcutMandatoryPanel sideShortcutMandatoryPanel;
 
-    public SideToolPanel getSideToolPanel()
-    {
-        if (this.sideToolPanel == null)
-        {
-            this.sideToolPanel = new SideToolPanel(this.diagramPanel.getGraphPanel().getGraph());
-        }
-        return this.sideToolPanel;
-    }
+	private SideShortcutOptionalPanel sideShortcutOptionalPanel;
 
-    private SideShortcutMandatoryPanel getSideShortcutMandatoryPanel()
-    {
-        if (this.sideShortcutMandatoryPanel == null)
-        {
-            this.sideShortcutMandatoryPanel = new SideShortcutMandatoryPanel(this.diagramPanel, this.getSideBarResourceBundle(), true);
-        }
-        return this.sideShortcutMandatoryPanel;
-    }
+	private SideSMDPropertiesPanel sideSMDPropertiesPanel;
 
-    private SideShortcutOptionalPanel getSideShortcutOptionalPanel()
-    {
-        if (this.sideShortcutOptionalPanel == null)
-        {
-            this.sideShortcutOptionalPanel = new SideShortcutOptionalPanel(this.diagramPanel, this.getSideBarResourceBundle());
-        }
-        return this.sideShortcutOptionalPanel;
-    }
-    
-    
+	private SideToolPanel sideToolPanel;
 
-    /**
-     * @return resource bundle
-     */
-    private ResourceBundle getSideBarResourceBundle()
-    {
-        if (this.resourceBundle == null)
-        {
-            this.resourceBundle = ResourceBundle.getBundle(ResourceBundleConstant.SIDEBAR_STRINGS, Locale.getDefault());
-        }
-        return this.resourceBundle;
-    }
-    
-    /* (non-Javadoc)
-     * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideBar#getAWTComponent()
-     */
-    public Component getAWTComponent()
-    {
-        return this;
-    }
+	private JTaskPane taskPane;
 
-    private DiagramPanel diagramPanel;
-    private SideToolPanel sideToolPanel;
-    private SideShortcutMandatoryPanel sideShortcutMandatoryPanel;
-    private SideShortcutOptionalPanel sideShortcutOptionalPanel;
-    private JTaskPane taskPane;
-    private ResourceBundle resourceBundle;
+	public LargeSideBar(DiagramPanel diagramPanel) {
+		super();
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.diagramPanel = diagramPanel;
+		taskPane = new JTaskPane();
+		add(taskPane);
+		this.addElement(this.getSideShortcutMandatoryPanel(), this
+				.getSideBarResourceBundle().getString("title.standardbuttons"));
+		this.addElement(this.getSideToolPanel(), this
+				.getSideBarResourceBundle().getString("title.diagramtools"));
+		this.addElement((Component) this.getSideShortcutOptionalPanel(), this
+				.getSideBarResourceBundle()
+				.getString("title.extendedfunctions"));
+		this.addElement((Component) this.getSideSMDPropertiesPanel(), this
+				.getSideBarResourceBundle().getString("title.smdProperties"));
+		setBorder(new MatteBorder(0, 1, 0, 0, ThemeManager.getInstance()
+				.getTheme().getSIDEBAR_BORDER_COLOR()));
+		fixWidth();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uk.ac.sheffield.dcs.smdStudio.framework.plugin.VisitableSideBar#addElement
+	 * (java.awt.Component, java.lang.String)
+	 */
+	public void addElement(final Component c, String title) {
+		JTaskPaneGroup group = new JTaskPaneGroup();
+		group.setFont(group.getFont().deriveFont(Font.PLAIN));
+		group.setTitle(title);
+		group.setLayout(new BorderLayout());
+		group.add(c, BorderLayout.CENTER);
+		taskPane.add(group);
+	}
+
+	private void fixWidth() {
+		JLabel sizer = new JLabel();
+		sizer.setPreferredSize(new Dimension(215, 1));
+		taskPane.add(sizer);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideBar#getAWTComponent
+	 * ()
+	 */
+	public Component getAWTComponent() {
+		return this;
+	}
+
+	/**
+	 * @return resource bundle
+	 */
+	private ResourceBundle getSideBarResourceBundle() {
+		if (this.resourceBundle == null) {
+			this.resourceBundle = ResourceBundle
+					.getBundle(ResourceBundleConstant.SIDEBAR_STRINGS, Locale
+							.getDefault());
+		}
+		return this.resourceBundle;
+	}
+
+	private SideShortcutMandatoryPanel getSideShortcutMandatoryPanel() {
+		if (this.sideShortcutMandatoryPanel == null) {
+			this.sideShortcutMandatoryPanel = new SideShortcutMandatoryPanel(
+					this.diagramPanel, this.getSideBarResourceBundle(), true);
+		}
+		return this.sideShortcutMandatoryPanel;
+	}
+
+	private SideShortcutOptionalPanel getSideShortcutOptionalPanel() {
+		if (this.sideShortcutOptionalPanel == null) {
+			this.sideShortcutOptionalPanel = new SideShortcutOptionalPanel(
+					this.diagramPanel, this.getSideBarResourceBundle());
+		}
+		return this.sideShortcutOptionalPanel;
+	}
+
+	private SideSMDPropertiesPanel getSideSMDPropertiesPanel() {
+		if (this.sideSMDPropertiesPanel == null) {
+			this.sideSMDPropertiesPanel = new SideSMDPropertiesPanel(
+					this.diagramPanel, this.getSideBarResourceBundle());
+		}
+		return this.sideSMDPropertiesPanel;
+	}
+
+	public SideToolPanel getSideToolPanel() {
+		if (this.sideToolPanel == null) {
+			this.sideToolPanel = new SideToolPanel(this.diagramPanel
+					.getGraphPanel().getGraph());
+		}
+		return this.sideToolPanel;
+	}
+
+	public void updateGraphProperties(GraphProperties properties) {
+		sideSMDPropertiesPanel.setTeamQuality(properties.getTeamQuality());
+		sideSMDPropertiesPanel.setTrainingCost(properties.getTrainingCost());
+	}
 
 }

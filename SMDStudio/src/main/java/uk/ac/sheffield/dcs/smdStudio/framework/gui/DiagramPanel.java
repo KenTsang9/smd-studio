@@ -61,9 +61,8 @@ import uk.ac.sheffield.dcs.smdStudio.framework.preference.PreferencesService;
 import uk.ac.sheffield.dcs.smdStudio.framework.preference.PreferencesServiceFactory;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
 import uk.ac.sheffield.dcs.smdStudio.framework.swingextension.TinyScrollBarUI;
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.state.StateDiagramGraph;
-
 
 /**
  * A panel for showing a graphical diagram. It is a kind of package composed by
@@ -75,6 +74,30 @@ import uk.ac.sheffield.dcs.smdStudio.product.diagram.state.StateDiagramGraph;
  */
 @SuppressWarnings("serial")
 public class DiagramPanel extends JPanel implements IDiagramPanel {
+	private String filePath;
+
+	private Graph graph;
+
+	private GraphPanel graphPanel;
+
+	private Id id;
+
+	private boolean isSaveNeeded = false;
+
+	private Vector<DiagramPanelListener> listeners = new Vector<DiagramPanelListener>();
+
+	private JScrollPane scrollableGraphPanel;
+
+	private JScrollPane scrollableSideBar;
+
+	private JScrollPane scrollableStatusBar;
+
+	private ISideBar sideBar;
+
+	private StatusBar statusBar;
+
+	private String title;
+
 	/**
 	 * Constructs a diagram panel with the specified graph
 	 * 
@@ -102,74 +125,74 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setGraph(com.horstmann
-	 * .violet.framework.diagram.Graph)
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#addListener
+	 * (com.horstmann .violet.framework.gui.DiagramPanelListener)
 	 */
-	public void setGraph(Graph aGraph) {
-		List<GraphModificationListener> backupedGraphListeners = new ArrayList<GraphModificationListener>();
-		if (this.graph != null) {
-			backupedGraphListeners.addAll(this.graph
-					.getGraphModificationListener());
+	public synchronized void addListener(DiagramPanelListener l) {
+		if (!this.listeners.contains(l)) {
+			this.listeners.addElement(l);
 		}
-		reset();
-		this.graph = aGraph;
-		this.graph.addGraphModificationListener(backupedGraphListeners);
+	}
 
-		setDefaultTitle(this.graph);
-		LayoutManager layout = new BorderLayout();
-		setLayout(layout);
+	@SuppressWarnings("unchecked")
+	private synchronized Vector<DiagramPanelListener> cloneListeners() {
+		return (Vector<DiagramPanelListener>) this.listeners.clone();
+	}
 
-		JScrollPane scrollGPanel = getScrollableGraphPanel();
-		add(scrollGPanel, BorderLayout.CENTER);
-		JScrollPane scrollSideBarPanel = getScrollableSideBar();
-		add(scrollSideBarPanel, BorderLayout.EAST);
-		JScrollPane scrollStatusBarPanel = getScrollableStatusBar();
-		add(scrollStatusBarPanel, BorderLayout.SOUTH);
+	/**
+	 * Fire an event to all listeners by calling
+	 */
+	public void fireMustOpenFile(URL url) {
+		Vector<DiagramPanelListener> tl = cloneListeners();
+		int size = tl.size();
+		if (size == 0)
+			return;
+		for (int i = 0; i < size; ++i) {
+			DiagramPanelListener l = (DiagramPanelListener) tl.elementAt(i);
+			l.mustOpenfile(url);
+		}
+	}
 
-		// Update title when graph dirty state changes
-		graph.addGraphModificationListener(new GraphModificationListener() {
-			public void childAttached(Graph g, int index, Node p, Node c) {
-				process();
-			}
+	/**
+	 * Fire an event to all listeners by calling
+	 */
+	private void fireSaveNeeded() {
+		Vector<DiagramPanelListener> tl = cloneListeners();
+		int size = tl.size();
+		if (size == 0)
+			return;
+		for (int i = 0; i < size; ++i) {
+			DiagramPanelListener l = (DiagramPanelListener) tl.elementAt(i);
+			l.graphCouldBeSaved();
+		}
+	}
 
-			public void childDetached(Graph g, int index, Node p, Node c) {
-				process();
-			}
+	/**
+	 * Fires a event to indicate that the title has been changed
+	 * 
+	 * @param newTitle
+	 */
+	private void fireTitleChanged(String newTitle) {
+		Vector<DiagramPanelListener> tl = cloneListeners();
+		int size = tl.size();
+		if (size == 0)
+			return;
 
-			public void edgeAdded(Graph g, Edge e, Point2D startPoint,
-					Point2D endPoint) {
-				process();
-			}
+		for (int i = 0; i < size; ++i) {
+			DiagramPanelListener aListener = (DiagramPanelListener) tl
+					.elementAt(i);
+			aListener.titleChanged(newTitle);
+		}
+	}
 
-			public void edgeRemoved(Graph g, Edge e) {
-				process();
-			}
-
-			public void nodeAdded(Graph g, Node n, Point2D location) {
-				process();
-			}
-
-			public void nodeRemoved(Graph g, Node n) {
-				process();
-			}
-
-			public void nodeMoved(Graph g, Node n, double dx, double dy) {
-				process();
-			}
-
-			public void propertyChangedOnNodeOrEdge(Graph g,
-					PropertyChangeEvent event) {
-				getGraphPanel().doLayout();
-				process();
-			}
-
-			private void process() {
-				setSaveNeeded(true);
-			}
-		});
-
-		refreshDisplay();
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#getFilePath()
+	 */
+	public String getFilePath() {
+		return filePath;
 	}
 
 	/*
@@ -182,74 +205,25 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 	}
 
 	/**
-	 * Resets all objet references to prepare this panel to welcome another
-	 * diagram.
+	 * @return the graph panel associated to this diagram panel
 	 */
-	private void reset() {
-		this.removeAll();
-		this.graph = null;
-		this.graphPanel = null;
-		this.sideBar = null;
-		this.scrollableGraphPanel = null;
-		this.statusBar = null;
-		this.filePath = null;
-		this.title = null;
-		this.listeners = new Vector<DiagramPanelListener>();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#getSideBar()
-	 */
-	public ISideBar getSideBar() {
-		if (this.sideBar == null) {
-			PreferencesService preferences = PreferencesServiceFactory
-					.getInstance();
-			Boolean isSmallSideBarPreferred = new Boolean(preferences.get(
-					PreferencesConstant.SMALL_SIDEBAR_PREFERRED, Boolean.FALSE
-							.toString()));
-			if (!isSmallSideBarPreferred) {
-				this.sideBar = new LargeSideBar(this);
-			}
-			if (isSmallSideBarPreferred) {
-				this.sideBar = new SmallSideBar(this);
-			}
-			this.sideBar.getSideToolPanel().addListener(
-					getGraphPanel().getToolListener());
+	public GraphPanel getGraphPanel() {
+		if (this.graphPanel == null) {
+			this.graphPanel = new GraphPanel(this.graph);
 		}
-		return this.sideBar;
+		return this.graphPanel;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#enlargeReduceSideBar()
+	 * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#getId()
 	 */
-	public void maximizeMinimizeSideBar() {
-		PreferencesService preferences = PreferencesServiceFactory
-				.getInstance();
-		Boolean isSmallSideBarPreferred = new Boolean(preferences.get(
-				PreferencesConstant.SMALL_SIDEBAR_PREFERRED, Boolean.FALSE
-						.toString()));
-		String invertedValue = Boolean.toString(!isSmallSideBarPreferred
-				.booleanValue());
-		preferences.put(PreferencesConstant.SMALL_SIDEBAR_PREFERRED,
-				invertedValue);
-
-		this.sideBar = null;
-		ISideBar newSideBar = this.getSideBar();
-		getScrollableSideBar().setViewportView(newSideBar.getAWTComponent());
-		getScrollableSideBar().setSize(newSideBar.getAWTComponent().getSize());
-		newSideBar.getSideToolPanel().addListener(
-				getGraphPanel().getToolListener());
-
-		this.statusBar = null;
-		StatusBar newStatusBar = this.getStatusBar();
-		getScrollableStatusBar().setViewportView(newStatusBar);
-
-		this.refreshDisplay();
+	public Id getId() {
+		if (this.id == null) {
+			this.id = new Id();
+		}
+		return this.id;
 	}
 
 	/**
@@ -337,6 +311,31 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 		return this.scrollableStatusBar;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#getSideBar()
+	 */
+	public ISideBar getSideBar() {
+		if (this.sideBar == null) {
+			PreferencesService preferences = PreferencesServiceFactory
+					.getInstance();
+			Boolean isSmallSideBarPreferred = new Boolean(preferences.get(
+					PreferencesConstant.SMALL_SIDEBAR_PREFERRED, Boolean.FALSE
+							.toString()));
+			if (!isSmallSideBarPreferred) {
+				this.sideBar = new LargeSideBar(this);
+			}
+			if (isSmallSideBarPreferred) {
+				this.sideBar = new SmallSideBar(this);
+			}
+			this.sideBar.getSideToolPanel().addListener(
+					getGraphPanel().getToolListener());
+		}
+		return this.sideBar;
+	}
+
 	/**
 	 * @return the current status bar
 	 */
@@ -345,16 +344,6 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 			this.statusBar = new StatusBar(this);
 		}
 		return this.statusBar;
-	}
-
-	/**
-	 * @return the graph panel associated to this diagram panel
-	 */
-	public GraphPanel getGraphPanel() {
-		if (this.graphPanel == null) {
-			this.graphPanel = new GraphPanel(this.graph);
-		}
-		return this.graphPanel;
 	}
 
 	/*
@@ -370,12 +359,74 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setTitle(java.lang.String
-	 * )
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#isSaveNeeded()
 	 */
-	public void setTitle(String newValue) {
-		title = newValue;
-		fireTitleChanged(newValue);
+	public boolean isSaveNeeded() {
+		return this.isSaveNeeded;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeuk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#
+	 * enlargeReduceSideBar()
+	 */
+	public void maximizeMinimizeSideBar() {
+		PreferencesService preferences = PreferencesServiceFactory
+				.getInstance();
+		Boolean isSmallSideBarPreferred = new Boolean(preferences.get(
+				PreferencesConstant.SMALL_SIDEBAR_PREFERRED, Boolean.FALSE
+						.toString()));
+		String invertedValue = Boolean.toString(!isSmallSideBarPreferred
+				.booleanValue());
+		preferences.put(PreferencesConstant.SMALL_SIDEBAR_PREFERRED,
+				invertedValue);
+
+		this.sideBar = null;
+		ISideBar newSideBar = this.getSideBar();
+		getScrollableSideBar().setViewportView(newSideBar.getAWTComponent());
+		getScrollableSideBar().setSize(newSideBar.getAWTComponent().getSize());
+		newSideBar.getSideToolPanel().addListener(
+				getGraphPanel().getToolListener());
+
+		this.statusBar = null;
+		StatusBar newStatusBar = this.getStatusBar();
+		getScrollableStatusBar().setViewportView(newStatusBar);
+
+		this.refreshDisplay();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#refreshDisplay
+	 * ()
+	 */
+	public void refreshDisplay() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				revalidate();
+				doLayout();
+				repaint();
+			}
+		});
+	}
+
+	/**
+	 * Resets all objet references to prepare this panel to welcome another
+	 * diagram.
+	 */
+	private void reset() {
+		this.removeAll();
+		this.graph = null;
+		this.graphPanel = null;
+		this.sideBar = null;
+		this.scrollableGraphPanel = null;
+		this.statusBar = null;
+		this.filePath = null;
+		this.title = null;
+		this.listeners = new Vector<DiagramPanelListener>();
 	}
 
 	/**
@@ -387,9 +438,7 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 		ResourceBundle rb = ResourceBundle.getBundle(
 				ResourceBundleConstant.MENU_STRINGS, Locale.getDefault());
 		if (graph instanceof SoftwareModulesDiagramGraph)
-			title = rb.getString("file.new.class_diagram.text");
-		else if (graph instanceof StateDiagramGraph)
-			title = rb.getString("file.new.state_diagram.text");
+			title = rb.getString("file.new.smd_diagram.text");
 		else
 			title = "Unknown";
 	}
@@ -397,18 +446,9 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#getFilePath()
-	 */
-	public String getFilePath() {
-		return filePath;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setFilePath(java.lang
-	 * .String)
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setFilePath
+	 * (java.lang .String)
 	 */
 	public void setFilePath(String path) {
 		filePath = path;
@@ -419,17 +459,92 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#isSaveNeeded()
+	 * @see
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setGraph(com
+	 * .horstmann .violet.framework.diagram.Graph)
 	 */
-	public boolean isSaveNeeded() {
-		return this.isSaveNeeded;
+	public void setGraph(Graph aGraph) {
+		List<GraphModificationListener> backupedGraphListeners = new ArrayList<GraphModificationListener>();
+		if (this.graph != null) {
+			backupedGraphListeners.addAll(this.graph
+					.getGraphModificationListener());
+		}
+		reset();
+		this.graph = aGraph;
+		this.graph.addGraphModificationListener(backupedGraphListeners);
+
+		setDefaultTitle(this.graph);
+		LayoutManager layout = new BorderLayout();
+		setLayout(layout);
+
+		JScrollPane scrollGPanel = getScrollableGraphPanel();
+		add(scrollGPanel, BorderLayout.CENTER);
+		JScrollPane scrollSideBarPanel = getScrollableSideBar();
+		add(scrollSideBarPanel, BorderLayout.EAST);
+		JScrollPane scrollStatusBarPanel = getScrollableStatusBar();
+		add(scrollStatusBarPanel, BorderLayout.SOUTH);
+
+		// Update title when graph dirty state changes
+		graph.addGraphModificationListener(new GraphModificationListener() {
+			public void childAttached(Graph g, int index, Node p, Node c) {
+				process();
+			}
+
+			public void childDetached(Graph g, int index, Node p, Node c) {
+				process();
+			}
+
+			public void edgeAdded(Graph g, Edge e, Point2D startPoint,
+					Point2D endPoint) {
+				process();
+			}
+
+			public void edgeRemoved(Graph g, Edge e) {
+				process();
+			}
+
+			@Override
+			public void graphPropertiesChanged(Graph g,
+					GraphProperties properties) {
+				((LargeSideBar) sideBar).updateGraphProperties(properties);
+				getGraphPanel().repaint();
+				process();
+			}
+
+			public void nodeAdded(Graph g, Node n, Point2D location) {
+				process();
+			}
+
+			public void nodeMoved(Graph g, Node n, double dx, double dy) {
+				process();
+			}
+
+			public void nodeRemoved(Graph g, Node n) {
+				process();
+			}
+
+			private void process() {
+				setSaveNeeded(true);
+			}
+
+			public void propertyChangedOnNodeOrEdge(Graph g,
+					PropertyChangeEvent event) {
+				getGraphPanel().doLayout();
+				process();
+			}
+		});
+		((LargeSideBar) this.sideBar).updateGraphProperties(aGraph
+				.getProperties());
+		refreshDisplay();
+
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setSaveNeeded(boolean)
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setSaveNeeded
+	 * (boolean)
 	 */
 	public void setSaveNeeded(boolean isSaveNeeded) {
 		this.isSaveNeeded = isSaveNeeded;
@@ -450,104 +565,12 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#addListener(com.horstmann
-	 * .violet.framework.gui.DiagramPanelListener)
+	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#setTitle(java
+	 * .lang.String )
 	 */
-	public synchronized void addListener(DiagramPanelListener l) {
-		if (!this.listeners.contains(l)) {
-			this.listeners.addElement(l);
-		}
+	public void setTitle(String newValue) {
+		title = newValue;
+		fireTitleChanged(newValue);
 	}
-
-	/**
-	 * Fires a event to indicate that the title has been changed
-	 * 
-	 * @param newTitle
-	 */
-	private void fireTitleChanged(String newTitle) {
-		Vector<DiagramPanelListener> tl = cloneListeners();
-		int size = tl.size();
-		if (size == 0)
-			return;
-
-		for (int i = 0; i < size; ++i) {
-			DiagramPanelListener aListener = (DiagramPanelListener) tl
-					.elementAt(i);
-			aListener.titleChanged(newTitle);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private synchronized Vector<DiagramPanelListener> cloneListeners() {
-		return (Vector<DiagramPanelListener>) this.listeners.clone();
-	}
-
-	/**
-	 * Fire an event to all listeners by calling
-	 */
-	public void fireMustOpenFile(URL url) {
-		Vector<DiagramPanelListener> tl = cloneListeners();
-		int size = tl.size();
-		if (size == 0)
-			return;
-		for (int i = 0; i < size; ++i) {
-			DiagramPanelListener l = (DiagramPanelListener) tl.elementAt(i);
-			l.mustOpenfile(url);
-		}
-	}
-
-	/**
-	 * Fire an event to all listeners by calling
-	 */
-	private void fireSaveNeeded() {
-		Vector<DiagramPanelListener> tl = cloneListeners();
-		int size = tl.size();
-		if (size == 0)
-			return;
-		for (int i = 0; i < size; ++i) {
-			DiagramPanelListener l = (DiagramPanelListener) tl.elementAt(i);
-			l.graphCouldBeSaved();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#getId()
-	 */
-	public Id getId() {
-		if (this.id == null) {
-			this.id = new Id();
-		}
-		return this.id;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel#refreshDisplay()
-	 */
-	public void refreshDisplay() {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				revalidate();
-				doLayout();
-				repaint();
-			}
-		});
-	}
-
-	private Graph graph;
-	private GraphPanel graphPanel;
-	private ISideBar sideBar;
-	private JScrollPane scrollableSideBar;
-	private JScrollPane scrollableGraphPanel;
-	private StatusBar statusBar;
-	private JScrollPane scrollableStatusBar;
-	private String filePath;
-	private String title;
-	private Vector<DiagramPanelListener> listeners = new Vector<DiagramPanelListener>();
-	private Id id;
-	private boolean isSaveNeeded = false;
 
 }

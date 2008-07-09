@@ -39,8 +39,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.gui.EditorFrame;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceFactory;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.state.StateDiagramGraph;
-
 
 /**
  * Represents the file menu on the editor frame
@@ -75,10 +73,9 @@ public class FileMenu extends JMenu {
 	private void createMenu() {
 		this.menuFactory.configureMenu(this, "file");
 		fileNewMenu = this.menuFactory.createMenu("file.new");
-		createGraphTypeMenuItem("file.new.class_diagram",
-				SoftwareModulesDiagramGraph.class, this.menuFactory, this.editorFrame);
-		createGraphTypeMenuItem("file.new.state_diagram",
-				StateDiagramGraph.class, this.menuFactory, this.editorFrame);
+		createGraphTypeMenuItem("file.new.smd_diagram",
+				SoftwareModulesDiagramGraph.class, this.menuFactory,
+				this.editorFrame);
 		this.add(this.fileNewMenu);
 
 		JMenuItem fileOpenItem = this.menuFactory.createMenuItem("file.open");

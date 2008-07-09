@@ -51,7 +51,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceFactory;
 import uk.ac.sheffield.dcs.smdStudio.framework.swingextension.WelcomeButtonUI;
 
-
 @SuppressWarnings("serial")
 public class WelcomePanel extends JPanel {
 
@@ -82,7 +81,8 @@ public class WelcomePanel extends JPanel {
 		c.gridy = 1;
 		panel.add(shortcutPanel, c);
 
-		add(panel, BorderLayout.NORTH);
+		add(new JPanel(), BorderLayout.NORTH);
+		add(panel, BorderLayout.CENTER);
 		add(getFootTextPanel(), BorderLayout.SOUTH);
 
 	}

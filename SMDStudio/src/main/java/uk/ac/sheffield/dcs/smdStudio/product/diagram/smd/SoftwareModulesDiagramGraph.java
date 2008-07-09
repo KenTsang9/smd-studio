@@ -40,7 +40,7 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 	private static final Edge[] EDGE_PROTOTYPES = new Edge[2];
 
 	private static final Node[] NODE_PROTOTYPES = new Node[4];
-
+	
 	static {
 		NODE_PROTOTYPES[0] = new SimpleModuleNode();
 		NODE_PROTOTYPES[1] = new ComplexModuleNode();

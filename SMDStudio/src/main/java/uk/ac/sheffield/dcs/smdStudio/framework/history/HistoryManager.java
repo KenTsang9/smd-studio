@@ -35,7 +35,7 @@ import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Edge;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Graph;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.GraphModificationListener;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
-
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 
 /**
  * Manages action history happened on graph
@@ -240,6 +240,33 @@ public class HistoryManager {
 					public void redo() throws CannotRedoException {
 						super.redo();
 						g.changeNodeOrEdgeProperty(event);
+					}
+				};
+				capturedEdit.addEdit(edit);
+			}
+
+			@Override
+			public void graphPropertiesChanged(final Graph g,
+					final GraphProperties properties) {
+				CompoundEdit capturedEdit = getCurrentCapturedEdit();
+				if (capturedEdit == null)
+					return;
+				UndoableEdit edit = new AbstractUndoableEdit() {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void undo() throws CannotUndoException {
+						g.changeTrainingCost(properties.getTrainingCost());
+						g.changeTeamQuality(properties.getTeamQuality());
+						super.undo();
+					}
+
+					@Override
+					public void redo() throws CannotRedoException {
+						super.redo();
+						g.changeTrainingCost(properties.getTrainingCost());
+						g.changeTeamQuality(properties.getTeamQuality());
 					}
 				};
 				capturedEdit.addEdit(edit);
