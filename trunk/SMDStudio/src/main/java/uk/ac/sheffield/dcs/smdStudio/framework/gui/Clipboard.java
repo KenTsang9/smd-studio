@@ -20,36 +20,7 @@ import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
 
 @SuppressWarnings("serial")
 public class Clipboard extends AbstractGraph {
-	public void copyIn(Graph g, List<Node> selectedNodes) {
-		if (selectedNodes.size() == 0)
-			return;
-
-		Rectangle2D bounds = null;
-		for (Node n : selectedNodes) {
-			if (bounds == null)
-				bounds = n.getBounds();
-			else
-				bounds.add(n.getBounds());
-		}
-
-		// form transitive closure over nodes, including children and
-		// node-valued properties
-		Set<Node> includedNodes = new HashSet<Node>();
-		for (Node n : selectedNodes)
-			addDependents(n, includedNodes);
-
-		// empty old contents
-		List<Edge> edges = new ArrayList<Edge>(getEdges());
-		for (Edge e : edges)
-			removeEdge(e);
-		List<Node> nodes = new ArrayList<Node>(getNodes());
-		for (Node n : nodes)
-			removeNode(n);
-
-		copyStructure(g, includedNodes, this, null, -bounds.getX(), -bounds
-				.getY());
-	}
-
+	
 	private static void addDependents(Node n, Set<Node> dependents) {
 		if (dependents.contains(n))
 			return;
@@ -70,10 +41,6 @@ public class Clipboard extends AbstractGraph {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	public Collection<Node> pasteOut(Graph g, Node selectedNode) {
-		return copyStructure(this, getNodes(), g, selectedNode, 0, 0);
 	}
 
 	private static Collection<Node> copyStructure(Graph graphIn,
@@ -183,13 +150,47 @@ public class Clipboard extends AbstractGraph {
 		return originalAndClonedNodes.values();
 	}
 
-	@Override
-	public Node[] getNodePrototypes() {
-		return null;
+	public void copyIn(Graph g, List<Node> selectedNodes) {
+		if (selectedNodes.size() == 0)
+			return;
+
+		Rectangle2D bounds = null;
+		for (Node n : selectedNodes) {
+			if (bounds == null)
+				bounds = n.getBounds();
+			else
+				bounds.add(n.getBounds());
+		}
+
+		// form transitive closure over nodes, including children and
+		// node-valued properties
+		Set<Node> includedNodes = new HashSet<Node>();
+		for (Node n : selectedNodes)
+			addDependents(n, includedNodes);
+
+		// empty old contents
+		List<Edge> edges = new ArrayList<Edge>(getEdges());
+		for (Edge e : edges)
+			removeEdge(e);
+		List<Node> nodes = new ArrayList<Node>(getNodes());
+		for (Node n : nodes)
+			removeNode(n);
+
+		copyStructure(g, includedNodes, this, null, -bounds.getX(), -bounds
+				.getY());
 	}
 
 	@Override
 	public Edge[] getEdgePrototypes() {
 		return null;
+	}
+
+	@Override
+	public Node[] getNodePrototypes() {
+		return null;
+	}
+
+	public Collection<Node> pasteOut(Graph g, Node selectedNode) {
+		return copyStructure(this, getNodes(), g, selectedNode, 0, 0);
 	}
 }

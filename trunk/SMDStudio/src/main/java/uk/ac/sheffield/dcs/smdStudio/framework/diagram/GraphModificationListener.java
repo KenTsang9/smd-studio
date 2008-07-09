@@ -3,6 +3,8 @@ package uk.ac.sheffield.dcs.smdStudio.framework.diagram;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
+
 
 /**
  * Implement this interface and register it a Graph class instance to
@@ -21,5 +23,6 @@ public interface GraphModificationListener
     void edgeAdded(Graph g, Edge e, Point2D startPoint, Point2D endPoint);
     void edgeRemoved(Graph g, Edge e);
     void propertyChangedOnNodeOrEdge(Graph g, PropertyChangeEvent event);
+    void graphPropertiesChanged(Graph g, GraphProperties properties);
     
 }

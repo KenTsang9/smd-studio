@@ -39,8 +39,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.preference.PreferencesService;
 import uk.ac.sheffield.dcs.smdStudio.framework.preference.PreferencesServiceFactory;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.state.StateDiagramGraph;
-
 
 /**
  * This file provides common file services
@@ -93,20 +91,15 @@ public abstract class FileService {
 				.getString("files.global.extension");
 		String defaultFilesExtName = appResources
 				.getString("files.global.name");
-		String classFilesExt = appResources.getString("files.smd.extension");
-		String classFilesExtName = appResources.getString("files.smd.name");
-		String stateFilesExt = appResources.getString("files.state.extension");
-		String stateFilesExtName = appResources.getString("files.state.name");
+		String smdFilesExt = appResources.getString("files.smd.extension");
+		String smdFilesExtName = appResources.getString("files.smd.name");
 
 		ExtensionFilter fileFilter0 = new ExtensionFilter(defaultFilesExtName,
 				new String[] { defaultFilesExt });
-		ExtensionFilter fileFilter1 = new ExtensionFilter(classFilesExtName,
-				new String[] { classFilesExt });
-		ExtensionFilter fileFilter2 = new ExtensionFilter(stateFilesExtName,
-				new String[] { stateFilesExt });
+		ExtensionFilter fileFilter1 = new ExtensionFilter(smdFilesExtName,
+				new String[] { smdFilesExt });
 
 		result.put(SoftwareModulesDiagramGraph.class, fileFilter1);
-		result.put(StateDiagramGraph.class, fileFilter2);
 		result.put(Graph.class, fileFilter0);
 
 		return result;
