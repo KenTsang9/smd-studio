@@ -27,6 +27,7 @@ import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -41,11 +42,12 @@ import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
  */
 @SuppressWarnings("serial")
 public class GraphProperties extends RectangularNode {
+
 	private static Color DEFAULT_COLOR = new Color(151, 168, 220);
 
 	private static int DEFAULT_HEIGHT = 100;
 
-	private static int DEFAULT_WIDTH = 100;
+	private static int DEFAULT_WIDTH = 150;
 
 	private static int FOLD_X = 8;
 
@@ -58,6 +60,20 @@ public class GraphProperties extends RectangularNode {
 	private double trainingCost;
 
 	private double teamQuality = 1;
+
+	public String calculateTotalCost() {
+		String notAvailable = resourceBundle
+				.getString("graph.noCostAvailable.text");
+		if (getGraph() == null) {
+			return notAvailable;
+		}
+		double totalCost = getGraph().calculateTotalCost();
+		if (totalCost == 0) {
+			return notAvailable;
+		}
+		totalCost = totalCost * teamQuality + trainingCost;
+		return new DecimalFormat("0.##").format(totalCost);
+	}
 
 	public double getTeamQuality() {
 		return teamQuality;
@@ -82,7 +98,8 @@ public class GraphProperties extends RectangularNode {
 	public GraphProperties() {
 		setBounds(new Rectangle2D.Double(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		text = new MultiLineString();
-		text.setJustification(MultiLineString.LEFT);
+		text.setJustification(MultiLineString.CENTER);
+		text.setSize(MultiLineString.LARGE);
 		updateText();
 		color = DEFAULT_COLOR;
 	}
@@ -96,12 +113,20 @@ public class GraphProperties extends RectangularNode {
 				"graph.teamQuality.text");
 		String sTeamQuality = getLabelValueFormatedText(prefix, String
 				.valueOf(teamQuality));
-		text.setText(sTeamQuality + "<br/><br/>" + sTrainingCost);
+		text.setText(formatCostText() + "<br/><br/>" + sTeamQuality
+				+ "<br/><br/>" + sTrainingCost);
+	}
+
+	private String formatCostText() {
+		String label = getGeneralGraphResourceBundle().getString(
+				"graph.totalCost.text");
+		return "<font face=\"comic sans ms\" size=\"7\" color=\"red\">" + label
+				+ ": " + calculateTotalCost() + "</font>";
 	}
 
 	private String getLabelValueFormatedText(String label, String value) {
-		return "<font face=\"comic sans ms\" size=\"10\">" + label + ": "
-				+ value + "</font>";
+		return "<font face=\"comic sans ms\">" + label + ": " + value
+				+ "</font>";
 	}
 
 	@Override
@@ -139,7 +164,6 @@ public class GraphProperties extends RectangularNode {
 		g2.fill(fold);
 		g2.setColor(oldColor);
 		g2.draw(fold);
-
 		text.draw(g2, getBounds());
 	}
 
@@ -182,6 +206,7 @@ public class GraphProperties extends RectangularNode {
 
 	@Override
 	public void layout(Graphics2D g2, Grid grid) {
+		updateText();
 		Rectangle2D b = text.getBounds(g2);
 		snapBounds(grid, Math.max(b.getWidth(), DEFAULT_WIDTH), Math.max(b
 				.getHeight(), DEFAULT_HEIGHT));

@@ -39,6 +39,7 @@ import java.util.List;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.PropertyUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModuleNode;
 
 /**
  * A graph consisting of selectable nodes and edges.
@@ -190,7 +191,6 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 			if (properties != null) {
 				nodes.remove(properties);
 				newNode.setGraph(null);
-				fireNodeRemoved(properties);
 			}
 			properties = (GraphProperties) newNode;
 		} else if (properties.contains(p)) {
@@ -766,4 +766,23 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	public void setMinBounds(Rectangle2D newValue) {
 		minBounds = newValue;
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+
+	@Override
+	public double calculateTotalCost() {
+		double cost = 0;
+		for (Node node : nodes) {
+			if (node instanceof SoftwareModuleNode) {
+				SoftwareModuleNode smd = (SoftwareModuleNode) node;
+				cost += smd.getCost();
+			}
+		}
+		return cost;
+	}
+
 }

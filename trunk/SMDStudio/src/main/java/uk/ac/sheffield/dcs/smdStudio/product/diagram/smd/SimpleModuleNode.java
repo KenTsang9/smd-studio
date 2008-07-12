@@ -37,29 +37,33 @@ import uk.ac.sheffield.dcs.smdStudio.framework.diagram.RectangularNode;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.GeometryUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.PointNode;
 
-
 /**
  * A class node in a class diagram.
  */
 @SuppressWarnings("serial")
-public class SimpleModuleNode extends RectangularNode {
-	private static int DEFAULT_HEIGHT = 100;
+public class SimpleModuleNode extends RectangularNode implements
+		SoftwareModuleNode {
+	private static JLabel costLabel = new JLabel();
 
 	private static int DEFAULT_COMPARTMENT_HEIGHT = 20;
+
+	private static int DEFAULT_HEIGHT = 100;
 
 	private static int DEFAULT_TOP_WIDTH = 60;
 
 	private static int DEFAULT_WIDTH = 100;
 
-	private static JLabel label = new JLabel();
-
 	private static final int NAME_GAP = 3;
+
+	private static JLabel nameLabel = new JLabel();
+
+	private double cost;
 
 	private MultiLineString description;
 
-	private String name;
-
 	private transient Rectangle2D mid;
+
+	private String name;
 
 	private transient Rectangle2D top;
 
@@ -74,15 +78,15 @@ public class SimpleModuleNode extends RectangularNode {
 		top = new Rectangle2D.Double(0, 0, DEFAULT_TOP_WIDTH,
 				DEFAULT_COMPARTMENT_HEIGHT);
 		mid = new Rectangle2D.Double(0, DEFAULT_COMPARTMENT_HEIGHT,
-				DEFAULT_WIDTH, DEFAULT_HEIGHT - DEFAULT_COMPARTMENT_HEIGHT);
+				DEFAULT_WIDTH, DEFAULT_HEIGHT - 2 * DEFAULT_COMPARTMENT_HEIGHT);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.Node#addNode(uk.ac.sheffield.dcs.smdStudio.framework
-	 * .Node, java.awt.geom.Point2D)
+	 * uk.ac.sheffield.dcs.smdStudio.framework.Node#addNode(uk.ac.sheffield.
+	 * dcs.smdStudio.framework .Node, java.awt.geom.Point2D)
 	 */
 	public boolean checkAddNode(Node n, Point2D p) {
 		// TODO : where is it added?
@@ -104,22 +108,43 @@ public class SimpleModuleNode extends RectangularNode {
 		super.draw(g2);
 		Rectangle2D bounds = getBounds();
 
-		label.setText("<html><b>" + name + "</b></html>");
-		label.setFont(g2.getFont());
-		Dimension d = label.getPreferredSize();
-		label.setBounds(0, 0, d.width, d.height);
+		nameLabel.setText("<html><b>" + name + "</b></html>");
+		nameLabel.setFont(g2.getFont());
+		Dimension nameD = nameLabel.getPreferredSize();
+		nameLabel.setBounds(0, 0, nameD.width, nameD.height);
 
 		g2.draw(top);
 
 		double textX = bounds.getX() + NAME_GAP;
-		double textY = bounds.getY() + (top.getHeight() - d.getHeight()) / 2;
+		double textY = bounds.getY() + (top.getHeight() - nameD.getHeight())
+				/ 2;
 
 		g2.translate(textX, textY);
-		label.paint(g2);
+		nameLabel.paint(g2);
 		g2.translate(-textX, -textY);
 
 		g2.draw(mid);
 		description.draw(g2, mid);
+
+		costLabel.setText("<html><b>" + cost + "</b></html>");
+		costLabel.setFont(g2.getFont());
+		Dimension costD = costLabel.getPreferredSize();
+		costLabel.setBounds(Math.max(DEFAULT_WIDTH, (int) mid.getWidth())
+				- costD.width - NAME_GAP, 0, costD.width, costD.height);
+
+		g2.draw(top);
+
+		textX = bounds.getX() + Math.max(DEFAULT_WIDTH, (int) mid.getWidth())
+				- costD.width - NAME_GAP;
+		textY = bounds.getY() + (top.getHeight() - costD.getHeight()) / 2;
+
+		g2.translate(textX, textY);
+		costLabel.paint(g2);
+		g2.translate(-textX, -textY);
+	}
+
+	public double getCost() {
+		return cost;
 	}
 
 	/**
@@ -157,9 +182,9 @@ public class SimpleModuleNode extends RectangularNode {
 	public void layout(Graphics2D g2, Grid grid) {
 
 		Rectangle2D descriptionBounds = description.getBounds(g2);
-		label.setText("<html><b>" + name + "</b></html>");
-		label.setFont(g2.getFont());
-		Dimension d = label.getPreferredSize();
+		nameLabel.setText("<html><b>" + name + "</b></html>");
+		nameLabel.setFont(g2.getFont());
+		Dimension d = nameLabel.getPreferredSize();
 		double topWidth = Math.max(d.getWidth() + 2 * NAME_GAP,
 				DEFAULT_TOP_WIDTH);
 		double midHeight = descriptionBounds.getHeight() == 0 ? DEFAULT_HEIGHT
@@ -175,6 +200,10 @@ public class SimpleModuleNode extends RectangularNode {
 		top = new Rectangle2D.Double(b.getX(), b.getY(), topWidth, topHeight);
 		mid = new Rectangle2D.Double(b.getX(), b.getY() + topHeight, b
 				.getWidth(), midHeight);
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -76,7 +75,7 @@ public class SideSMDPropertiesPanel extends JPanel {
 		JLabel label = new JLabel(bundle.getString("trainingCost.text"));
 		label.setFont(new Font(label.getFont().getName(), Font.BOLD, label
 				.getFont().getSize() + 5));
-		label.setForeground(Color.gray);
+		// label.setForeground(Color.gray);
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.weightx = 0.1;
@@ -111,11 +110,11 @@ public class SideSMDPropertiesPanel extends JPanel {
 	private JPanel getTeamQualityPanel(ResourceBundle bundle) {
 		JPanel teamQualityPanel = new JPanel(new GridBagLayout());
 
-		initTeamQuality();
+		initTeamQuality(bundle);
 		JLabel label = new JLabel(bundle.getString("teamQuality.text"));
 		label.setFont(new Font(label.getFont().getName(), Font.BOLD, label
 				.getFont().getSize() + 5));
-		label.setForeground(Color.gray);
+		// label.setForeground(Color.gray);
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -132,18 +131,20 @@ public class SideSMDPropertiesPanel extends JPanel {
 		return teamQualityPanel;
 	}
 
-	private void initTeamQuality() {
-		teamQuality = new JSlider(JSlider.HORIZONTAL, 0, 30, 10);
+	private void initTeamQuality(ResourceBundle bundle) {
+		teamQuality = new JSlider(JSlider.HORIZONTAL, 1, 20, 10);
 
 		// Turn on labels at major tick marks.
 		teamQuality.setMajorTickSpacing(10);
 		teamQuality.setMinorTickSpacing(1);
 		// Create the label table
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-		labelTable.put(new Integer(0), new JLabel("Low"));
-		labelTable.put(new Integer(10), new JLabel("Medium"));
-		labelTable.put(new Integer(20), new JLabel("High"));
-		labelTable.put(new Integer(30), new JLabel("Expert"));
+		labelTable.put(new Integer(1), new JLabel(bundle
+				.getString("teamQuality.expert.text")));
+		labelTable.put(new Integer(10), new JLabel(bundle
+				.getString("teamQuality.medium.text")));
+		labelTable.put(new Integer(20), new JLabel(bundle
+				.getString("teamQuality.low.text")));
 		teamQuality.setLabelTable(labelTable);
 		teamQuality.setPaintTicks(true);
 		teamQuality.setPaintLabels(true);

@@ -142,7 +142,7 @@ public class MultiLineString implements Serializable, Cloneable {
 			suffix.insert(0, "</u>");
 		}
 		if (size == LARGE) {
-			prefix.append("<font size=\"3\"><b>");
+			prefix.append("<font size=\"5\"><b>");
 			suffix.insert(0, "</b></font>");
 		}
 		if (size == SMALL) {

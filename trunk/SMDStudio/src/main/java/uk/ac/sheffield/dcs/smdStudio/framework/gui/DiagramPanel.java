@@ -507,7 +507,7 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 			public void graphPropertiesChanged(Graph g,
 					GraphProperties properties) {
 				((LargeSideBar) sideBar).updateGraphProperties(properties);
-				getGraphPanel().repaint();
+				refreshDisplay();
 				process();
 			}
 
@@ -535,6 +535,7 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 		});
 		((LargeSideBar) this.sideBar).updateGraphProperties(aGraph
 				.getProperties());
+		setSaveNeeded(false);
 		refreshDisplay();
 
 	}
