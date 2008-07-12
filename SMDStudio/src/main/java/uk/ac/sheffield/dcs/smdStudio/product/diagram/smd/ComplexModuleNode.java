@@ -39,12 +39,12 @@ import uk.ac.sheffield.dcs.smdStudio.framework.diagram.RectangularNode;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.GeometryUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
 
-
 /**
  * A package node in a UML diagram.
  */
 @SuppressWarnings("serial")
-public class ComplexModuleNode extends RectangularNode {
+public class ComplexModuleNode extends RectangularNode implements
+		SoftwareModuleNode {
 	private static int DEFAULT_HEIGHT = 100;
 
 	private static int DEFAULT_COMPARTMENT_HEIGHT = 20;
@@ -57,7 +57,9 @@ public class ComplexModuleNode extends RectangularNode {
 
 	private static final int DEFAULT_YGAP = 5;
 
-	private static JLabel label = new JLabel();
+	private static JLabel nameLabel = new JLabel();
+
+	private static JLabel costLabel = new JLabel();
 
 	private static final int NAME_GAP = 3;
 
@@ -122,10 +124,10 @@ public class ComplexModuleNode extends RectangularNode {
 		super.draw(g2);
 		Rectangle2D bounds = getBounds();
 
-		label.setText("<html><b>" + name + "</b></html>");
-		label.setFont(g2.getFont());
-		Dimension d = label.getPreferredSize();
-		label.setBounds(0, 0, d.width, d.height);
+		nameLabel.setText("<html><b>" + name + "</b></html>");
+		nameLabel.setFont(g2.getFont());
+		Dimension d = nameLabel.getPreferredSize();
+		nameLabel.setBounds(0, 0, d.width, d.height);
 
 		g2.draw(top);
 
@@ -133,14 +135,29 @@ public class ComplexModuleNode extends RectangularNode {
 		double textY = bounds.getY() + (top.getHeight() - d.getHeight()) / 2;
 
 		g2.translate(textX, textY);
-		label.paint(g2);
+		nameLabel.paint(g2);
 		g2.translate(-textX, -textY);
 
 		g2.draw(mid);
 		description.draw(g2, mid);
 
 		g2.draw(bot);
-		// description.draw(g2, bot);
+
+		costLabel.setText("<html><b>" + getCost() + "</b></html>");
+		costLabel.setFont(g2.getFont());
+		Dimension costD = costLabel.getPreferredSize();
+		costLabel.setBounds(Math.max(DEFAULT_WIDTH, (int) bot.getWidth())
+				- costD.width - NAME_GAP, 0, costD.width, costD.height);
+
+		g2.draw(top);
+
+		textX = bounds.getX() + Math.max(DEFAULT_WIDTH, (int) bot.getWidth())
+				- costD.width - NAME_GAP;
+		textY = bounds.getY() + (top.getHeight() - costD.getHeight()) / 2;
+
+		g2.translate(textX, textY);
+		costLabel.paint(g2);
+		g2.translate(-textX, -textY);
 	}
 
 	/**
@@ -193,13 +210,15 @@ public class ComplexModuleNode extends RectangularNode {
 		}
 
 		Rectangle2D descriptionBounds = description.getBounds(g2);
-		label.setText("<html><b>" + name + "</b></html>");
-		label.setFont(g2.getFont());
-		Dimension d = label.getPreferredSize();
+		nameLabel.setText("<html><b>" + name + "</b></html>");
+		nameLabel.setFont(g2.getFont());
+		Dimension d = nameLabel.getPreferredSize();
 		double topWidth = Math.max(d.getWidth() + 2 * NAME_GAP,
 				DEFAULT_TOP_WIDTH);
 		double midHeight = Math.max(d.getHeight(), descriptionBounds
 				.getHeight());
+		double midwidth = Math.max(Math.max(d.getWidth(), descriptionBounds
+				.getWidth()), topWidth);
 		double topHeight = DEFAULT_COMPARTMENT_HEIGHT;
 
 		if (childBounds == null) // no children; leave (x,y) as is and place
@@ -211,9 +230,12 @@ public class ComplexModuleNode extends RectangularNode {
 					+ Math.max(DEFAULT_HEIGHT - DEFAULT_COMPARTMENT_HEIGHT,
 							descriptionBounds.getHeight()));
 		} else {
+			costLabel.setText("<html><b>" + getCost() + "</b></html>");
+			costLabel.setFont(g2.getFont());
 			setBounds(new Rectangle2D.Double(childBounds.getX() - xgap,
 					childBounds.getY() - topHeight - midHeight - ygap, Math
-							.max(topWidth, childBounds.getWidth() + 2 * xgap),
+							.max(topWidth + DEFAULT_WIDTH, Math.max(midwidth,
+									childBounds.getWidth() + 2 * xgap)),
 					topHeight + midHeight + childBounds.getHeight() + 2 * ygap));
 		}
 
@@ -256,5 +278,20 @@ public class ComplexModuleNode extends RectangularNode {
 		else
 			for (Node childNode : getChildren())
 				childNode.translate(dx, dy);
+	}
+
+	public double getCost() {
+		try {
+			double cost = 0;
+			List<Node> children = getChildren();
+			for (Node child : children) {
+				if (child instanceof SoftwareModuleNode) {
+					cost += ((SoftwareModuleNode) child).getCost();
+				}
+			}
+			return cost;
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 }

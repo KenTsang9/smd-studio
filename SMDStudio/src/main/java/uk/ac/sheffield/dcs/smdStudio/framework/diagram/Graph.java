@@ -254,4 +254,6 @@ public interface Graph {
 
 	public abstract GraphProperties getProperties();
 
+	public abstract double calculateTotalCost();
+
 }
