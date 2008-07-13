@@ -271,6 +271,11 @@ public class HistoryManager {
 				};
 				capturedEdit.addEdit(edit);
 			}
+
+			@Override
+			public void repaintGraph() {
+				// Nothing to be done here
+			}
 		};
 		graph.addGraphModificationListener(graphModListener);
 		this.undoManager.setLimit(HISTORY_SIZE);

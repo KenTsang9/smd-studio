@@ -256,4 +256,6 @@ public interface Graph {
 
 	public abstract double calculateTotalCost();
 
+	public abstract void repaint();
+
 }

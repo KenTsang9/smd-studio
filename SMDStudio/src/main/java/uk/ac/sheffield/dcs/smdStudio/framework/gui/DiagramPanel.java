@@ -532,6 +532,11 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 				getGraphPanel().doLayout();
 				process();
 			}
+
+			@Override
+			public void repaintGraph() {
+				getGraphPanel().doLayout();
+			}
 		});
 		((LargeSideBar) this.sideBar).updateGraphProperties(aGraph
 				.getProperties());

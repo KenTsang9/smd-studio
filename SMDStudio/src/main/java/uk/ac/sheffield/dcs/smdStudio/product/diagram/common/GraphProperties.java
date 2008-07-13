@@ -92,6 +92,12 @@ public class GraphProperties extends RectangularNode {
 
 	private ResourceBundle resourceBundle;
 
+	private String trainingCostText = "";
+
+	private String teamQualityText = "";
+
+	private String totalCostText = "";
+
 	/**
 	 * Construct a note node with a default size and color
 	 */
@@ -105,16 +111,27 @@ public class GraphProperties extends RectangularNode {
 	}
 
 	private void updateText() {
+		boolean changed = false;
 		String prefix = getGeneralGraphResourceBundle().getString(
 				"graph.trainingCost.text");
 		String sTrainingCost = getLabelValueFormatedText(prefix, String
 				.valueOf(trainingCost));
+		changed = changed ? true : trainingCostText.equals(sTrainingCost);
+		trainingCostText = sTrainingCost;
 		prefix = getGeneralGraphResourceBundle().getString(
 				"graph.teamQuality.text");
 		String sTeamQuality = getLabelValueFormatedText(prefix, String
 				.valueOf(teamQuality));
-		text.setText(formatCostText() + "<br/><br/>" + sTeamQuality
-				+ "<br/><br/>" + sTrainingCost);
+		changed = changed ? true : teamQualityText.equals(sTeamQuality);
+		teamQualityText = sTeamQuality;
+		String sTotalCost = formatCostText();
+		changed = changed ? true : totalCostText.equals(sTotalCost);
+		totalCostText = sTotalCost;
+		text.setText(sTotalCost + "<br/><br/>" + sTeamQuality + "<br/><br/>"
+				+ sTrainingCost);
+		if (changed && getGraph() != null) {
+			getGraph().repaint();
+		}
 	}
 
 	private String formatCostText() {
@@ -144,6 +161,7 @@ public class GraphProperties extends RectangularNode {
 	@Override
 	public void draw(Graphics2D g2) {
 		super.draw(g2);
+		updateText();
 		Color oldColor = g2.getColor();
 		g2.setColor(color);
 
@@ -206,7 +224,6 @@ public class GraphProperties extends RectangularNode {
 
 	@Override
 	public void layout(Graphics2D g2, Grid grid) {
-		updateText();
 		Rectangle2D b = text.getBounds(g2);
 		snapBounds(grid, Math.max(b.getWidth(), DEFAULT_WIDTH), Math.max(b
 				.getHeight(), DEFAULT_HEIGHT));
