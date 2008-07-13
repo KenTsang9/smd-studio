@@ -24,5 +24,6 @@ public interface GraphModificationListener
     void edgeRemoved(Graph g, Edge e);
     void propertyChangedOnNodeOrEdge(Graph g, PropertyChangeEvent event);
     void graphPropertiesChanged(Graph g, GraphProperties properties);
+	void repaintGraph();
     
 }

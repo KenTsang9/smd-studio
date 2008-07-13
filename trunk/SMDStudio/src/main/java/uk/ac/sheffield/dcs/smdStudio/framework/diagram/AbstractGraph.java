@@ -39,7 +39,7 @@ import java.util.List;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.PropertyUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModuleNode;
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SimpleModuleNode;
 
 /**
  * A graph consisting of selectable nodes and edges.
@@ -58,28 +58,9 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 
 	private transient ArrayList<Node> nodesToBeRemoved;
 
-	private transient int recursiveRemoves;
-
 	private GraphProperties properties;
 
-	public GraphProperties getProperties() {
-		return properties;
-	}
-
-	public void changeTrainingCost(double trainingCost) {
-		this.properties.setTrainingCost(trainingCost);
-		fireGraphPropertiesChanged();
-	}
-
-	public void changeTeamQuality(double teamQuality) {
-		this.properties.setTeamQuality(teamQuality);
-		fireGraphPropertiesChanged();
-	}
-
-	public void fireGraphPropertiesChanged() {
-		for (GraphModificationListener listener : cloneListeners())
-			listener.graphPropertiesChanged(this, properties);
-	}
+	private transient int recursiveRemoves;
 
 	/**
 	 * Adds a persistence delegate to a given encoder that encodes the child
@@ -243,6 +224,18 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 		fireChildAttached(index, parentNode, childNode);
 	}
 
+	@Override
+	public double calculateTotalCost() {
+		double cost = 0;
+		for (Node node : nodes) {
+			if (node instanceof SimpleModuleNode) {
+				SimpleModuleNode smd = (SimpleModuleNode) node;
+				cost += smd.getCost();
+			}
+		}
+		return cost;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -253,6 +246,22 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 		PropertyUtils.setProperty(e.getSource(), e.getPropertyName(), e
 				.getNewValue());
 		firePropertyChangeOnNodeOrEdge(e);
+	}
+
+	public void changeTeamQuality(double teamQuality) {
+		this.properties.setTeamQuality(teamQuality);
+		fireGraphPropertiesChanged();
+	}
+
+	public void changeTrainingCost(double trainingCost) {
+		this.properties.setTrainingCost(trainingCost);
+		fireGraphPropertiesChanged();
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -464,6 +473,11 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 			listener.edgeRemoved(this, e);
 	}
 
+	public void fireGraphPropertiesChanged() {
+		for (GraphModificationListener listener : cloneListeners())
+			listener.graphPropertiesChanged(this, properties);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -586,6 +600,10 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	 */
 	public Collection<Node> getNodes() {
 		return Collections.unmodifiableCollection(nodes);
+	}
+
+	public GraphProperties getProperties() {
+		return properties;
 	}
 
 	/*
@@ -756,6 +774,12 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 		nodesToBeRemoved.clear();
 	}
 
+	@Override
+	public void repaint() {
+		for (GraphModificationListener listener : cloneListeners())
+			listener.repaintGraph();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -765,24 +789,6 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	 */
 	public void setMinBounds(Rectangle2D newValue) {
 		minBounds = newValue;
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return super.clone();
-	}
-
-	@Override
-	public double calculateTotalCost() {
-		double cost = 0;
-		for (Node node : nodes) {
-			if (node instanceof SoftwareModuleNode) {
-				SoftwareModuleNode smd = (SoftwareModuleNode) node;
-				cost += smd.getCost();
-			}
-		}
-		return cost;
 	}
 
 }
