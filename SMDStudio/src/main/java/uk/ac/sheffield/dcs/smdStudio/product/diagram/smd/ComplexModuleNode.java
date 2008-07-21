@@ -28,10 +28,13 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Edge;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Grid;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.MultiLineString;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
@@ -44,7 +47,7 @@ import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
  */
 @SuppressWarnings("serial")
 public class ComplexModuleNode extends RectangularNode implements
-		SoftwareModuleNode {
+		SoftwareModuleDiagramObject {
 	private static int DEFAULT_HEIGHT = 100;
 
 	private static int DEFAULT_COMPARTMENT_HEIGHT = 20;
@@ -72,6 +75,8 @@ public class ComplexModuleNode extends RectangularNode implements
 	private transient Rectangle2D mid;
 
 	private transient Rectangle2D top;
+
+	private Set<ModuleTransitionEdge> edges = new HashSet<ModuleTransitionEdge>();
 
 	/**
 	 * Construct a package node with a default size
@@ -285,13 +290,26 @@ public class ComplexModuleNode extends RectangularNode implements
 			double cost = 0;
 			List<Node> children = getChildren();
 			for (Node child : children) {
-				if (child instanceof SoftwareModuleNode) {
-					cost += ((SoftwareModuleNode) child).getCost();
+				if (child instanceof SoftwareModuleDiagramObject) {
+					cost += ((SoftwareModuleDiagramObject) child).getCost();
+				}
+			}
+			for (Edge edge : edges) {
+				if (edge instanceof SoftwareModuleDiagramObject) {
+					cost += ((SoftwareModuleDiagramObject) edge).getCost();
 				}
 			}
 			return cost;
 		} catch (Exception e) {
 			return 0;
 		}
+	}
+
+	public void addEdge(ModuleTransitionEdge edge) {
+		edges.add(edge);
+	}
+
+	public void removeEdge(ModuleTransitionEdge edge) {
+		edges.remove(edge);
 	}
 }

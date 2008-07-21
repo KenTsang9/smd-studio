@@ -30,7 +30,6 @@ import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.DiagramLinkNode;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteEdge;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
 
-
 /**
  * A UML class diagram.
  */
@@ -40,7 +39,7 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 	private static final Edge[] EDGE_PROTOTYPES = new Edge[2];
 
 	private static final Node[] NODE_PROTOTYPES = new Node[4];
-	
+
 	static {
 		NODE_PROTOTYPES[0] = new SimpleModuleNode();
 		NODE_PROTOTYPES[1] = new ComplexModuleNode();
@@ -51,6 +50,7 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 		EDGE_PROTOTYPES[1] = new NoteEdge();
 	}
 
+	@Override
 	public boolean addEdgeAtPoints(Edge e, Point2D p1, Point2D p2) {
 		Node n1 = findNode(p1);
 		Node n2 = findNode(p2);
@@ -80,12 +80,23 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 		return super.addEdgeAtPoints(e, p1, p2);
 	}
 
+	@Override
 	public Edge[] getEdgePrototypes() {
 		return EDGE_PROTOTYPES;
 	}
 
+	@Override
 	public Node[] getNodePrototypes() {
 		return NODE_PROTOTYPES;
+	}
+
+	@Override
+	public void removeEdge(Edge e) {
+		super.removeEdge(e);
+		if (e instanceof ModuleTransitionEdge) {
+			ModuleTransitionEdge edge = (ModuleTransitionEdge) e;
+			edge.remove();
+		}
 	}
 
 }

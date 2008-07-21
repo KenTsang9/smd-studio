@@ -47,7 +47,7 @@ public abstract class AbstractEdge implements Edge {
 	 * uk.ac.sheffield.dcs.smdStudio.framework.Edge#connect(uk.ac.sheffield.dcs.smdStudio.framework
 	 * .Node, uk.ac.sheffield.dcs.smdStudio.framework.Node)
 	 */
-	public final void connect(Node s, Node e) {
+	public void connect(Node s, Node e) {
 		start = s;
 		end = e;
 	}
