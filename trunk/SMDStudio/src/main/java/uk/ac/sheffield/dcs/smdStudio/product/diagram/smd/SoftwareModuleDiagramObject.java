@@ -1,6 +1,6 @@
 package uk.ac.sheffield.dcs.smdStudio.product.diagram.smd;
 
-public interface SoftwareModuleNode {
+public interface SoftwareModuleDiagramObject {
 	
 	double getCost();
 

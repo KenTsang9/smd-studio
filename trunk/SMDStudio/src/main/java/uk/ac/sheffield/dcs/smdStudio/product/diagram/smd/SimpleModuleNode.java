@@ -42,7 +42,7 @@ import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.PointNode;
  */
 @SuppressWarnings("serial")
 public class SimpleModuleNode extends RectangularNode implements
-		SoftwareModuleNode {
+		SoftwareModuleDiagramObject {
 	private static JLabel costLabel = new JLabel();
 
 	private static int DEFAULT_COMPARTMENT_HEIGHT = 20;

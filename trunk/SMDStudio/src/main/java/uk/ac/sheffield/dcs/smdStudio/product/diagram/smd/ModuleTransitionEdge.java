@@ -33,32 +33,24 @@ import javax.swing.JLabel;
 
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ArrowHead;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Direction;
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ShapeEdge;
-
 
 /**
  * A curved edge for a state transition in a state diagram.
  */
 @SuppressWarnings("serial")
-public class ModuleTransitionEdge extends ShapeEdge {
-	/**
-	 * Sets the label property value.
-	 * 
-	 * @param newValue
-	 *            the new value
-	 */
-	public void setLabel(String newValue) {
-		labelText = newValue;
-	}
+public class ModuleTransitionEdge extends ShapeEdge implements
+		SoftwareModuleDiagramObject {
+	private static JLabel label = new JLabel();
 
-	/**
-	 * Gets the label property value.
-	 * 
-	 * @return the current value
-	 */
-	public String getLabel() {
-		return labelText;
-	}
+	private double angle;
+
+	private double cost;
+
+	private String labelText = "";
+
+	private ComplexModuleNode parent;
 
 	public void draw(Graphics2D g2) {
 		g2.draw(getShape());
@@ -82,6 +74,65 @@ public class ModuleTransitionEdge extends ShapeEdge {
 		g2.translate(-x, -y);
 	}
 
+	public Rectangle2D getBounds(Graphics2D g2) {
+		Rectangle2D r = super.getBounds(g2);
+		r.add(getLabelBounds(g2));
+		return r;
+	}
+
+	public Line2D getConnectionPoints() {
+		Direction d1;
+		Direction d2;
+
+		if (getStart() == getEnd()) {
+			angle = 60;
+			d1 = Direction.EAST.turn(-30);
+			d2 = Direction.EAST.turn(30);
+		} else {
+			angle = 10;
+			Rectangle2D start = getStart().getBounds();
+			Rectangle2D end = getEnd().getBounds();
+			Point2D startCenter = new Point2D.Double(start.getCenterX(), start
+					.getCenterY());
+			Point2D endCenter = new Point2D.Double(end.getCenterX(), end
+					.getCenterY());
+			d1 = new Direction(startCenter, endCenter).turn(-5);
+			d2 = new Direction(endCenter, startCenter).turn(5);
+		}
+		Point2D p = getStart().getConnectionPoint(d1);
+		Point2D q = getEnd().getConnectionPoint(d2);
+
+		return new Line2D.Double(p, q);
+	}
+
+	/**
+	 * Gets the control point for the quadratic spline.
+	 * 
+	 * @return the control point
+	 */
+	private Point2D getControlPoint() {
+		Line2D line = getConnectionPoints();
+		double t = Math.tan(Math.toRadians(angle));
+		double dx = (line.getX2() - line.getX1()) / 2;
+		double dy = (line.getY2() - line.getY1()) / 2;
+		return new Point2D.Double((line.getX1() + line.getX2()) / 2 + t * dy,
+				(line.getY1() + line.getY2()) / 2 - t * dx);
+	}
+
+	@Override
+	public double getCost() {
+		return cost;
+	}
+
+	/**
+	 * Gets the label property value.
+	 * 
+	 * @return the current value
+	 */
+	public String getLabel() {
+		return labelText;
+	}
+
 	/**
 	 * Gets the bounds of the label text
 	 * 
@@ -90,7 +141,7 @@ public class ModuleTransitionEdge extends ShapeEdge {
 	 * @return the bounds of the label text
 	 */
 	private Rectangle2D getLabelBounds(Graphics2D g2) {
-		label.setText("<html>" + labelText + "</html>");
+		label.setText("<html>" + labelText + "<b> (" + cost + ")</b></html>");
 		label.setFont(g2.getFont());
 		Dimension d = label.getPreferredSize();
 		label.setBounds(0, 0, d.width, d.height);
@@ -125,20 +176,6 @@ public class ModuleTransitionEdge extends ShapeEdge {
 		return new Rectangle2D.Double(x, y, d.width, d.height);
 	}
 
-	/**
-	 * Gets the control point for the quadratic spline.
-	 * 
-	 * @return the control point
-	 */
-	private Point2D getControlPoint() {
-		Line2D line = getConnectionPoints();
-		double t = Math.tan(Math.toRadians(angle));
-		double dx = (line.getX2() - line.getX1()) / 2;
-		double dy = (line.getY2() - line.getY1()) / 2;
-		return new Point2D.Double((line.getX1() + line.getX2()) / 2 + t * dy,
-				(line.getY1() + line.getY2()) / 2 - t * dx);
-	}
-
 	public Shape getShape() {
 		Line2D line = getConnectionPoints();
 		Point2D control = getControlPoint();
@@ -149,39 +186,33 @@ public class ModuleTransitionEdge extends ShapeEdge {
 		return p;
 	}
 
-	public Rectangle2D getBounds(Graphics2D g2) {
-		Rectangle2D r = super.getBounds(g2);
-		r.add(getLabelBounds(g2));
-		return r;
+	public void setCost(double cost) {
+		this.cost = cost;
 	}
 
-	public Line2D getConnectionPoints() {
-		Direction d1;
-		Direction d2;
+	/**
+	 * Sets the label property value.
+	 * 
+	 * @param newValue
+	 *            the new value
+	 */
+	public void setLabel(String newValue) {
+		labelText = newValue;
+	}
 
-		if (getStart() == getEnd()) {
-			angle = 60;
-			d1 = Direction.EAST.turn(-30);
-			d2 = Direction.EAST.turn(30);
-		} else {
-			angle = 10;
-			Rectangle2D start = getStart().getBounds();
-			Rectangle2D end = getEnd().getBounds();
-			Point2D startCenter = new Point2D.Double(start.getCenterX(), start
-					.getCenterY());
-			Point2D endCenter = new Point2D.Double(end.getCenterX(), end
-					.getCenterY());
-			d1 = new Direction(startCenter, endCenter).turn(-5);
-			d2 = new Direction(endCenter, startCenter).turn(5);
+	@Override
+	public void connect(Node s, Node e) {
+		if (e.getParent() != null && e.getParent() instanceof ComplexModuleNode) {
+			this.parent = (ComplexModuleNode) e.getParent();
+			parent.addEdge(this);
 		}
-		Point2D p = getStart().getConnectionPoint(d1);
-		Point2D q = getEnd().getConnectionPoint(d2);
-
-		return new Line2D.Double(p, q);
+		super.connect(s, e);
 	}
 
-	private double angle;
-	private String labelText = "";
+	public void remove() {
+		if (parent != null) {
+			parent.removeEdge(this);
+		}
+	}
 
-	private static JLabel label = new JLabel();
 }

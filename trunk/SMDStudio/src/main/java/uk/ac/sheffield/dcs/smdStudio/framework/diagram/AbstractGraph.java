@@ -39,7 +39,8 @@ import java.util.List;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.PropertyUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SimpleModuleNode;
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.ComplexModuleNode;
+import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModuleDiagramObject;
 
 /**
  * A graph consisting of selectable nodes and edges.
@@ -228,8 +229,15 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	public double calculateTotalCost() {
 		double cost = 0;
 		for (Node node : nodes) {
-			if (node instanceof SimpleModuleNode) {
-				SimpleModuleNode smd = (SimpleModuleNode) node;
+			if (node instanceof SoftwareModuleDiagramObject
+					&& !(node instanceof ComplexModuleNode)) {
+				SoftwareModuleDiagramObject smd = (SoftwareModuleDiagramObject) node;
+				cost += smd.getCost();
+			}
+		}
+		for (Edge edge : edges) {
+			if (edge instanceof SoftwareModuleDiagramObject) {
+				SoftwareModuleDiagramObject smd = (SoftwareModuleDiagramObject) edge;
 				cost += smd.getCost();
 			}
 		}
@@ -666,7 +674,7 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	 * .horstmann .violet.framework.diagram.Node)
 	 */
 	public void removeNode(Node n) {
-		// properties should not be removed!
+		// graph properties should not be removed!
 		if (!(n instanceof GraphProperties)) {
 			Node p = n.getParent();
 			if (p != null)
@@ -722,9 +730,11 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 							.contains(e.getEnd())))
 				edgesToBeRemoved.add(e);
 		}
-		edges.removeAll(edgesToBeRemoved);
+		// edges.removeAll(edgesToBeRemoved);
+		// for (Edge e : edgesToBeRemoved)
+		// fireEdgeRemoved(e);
 		for (Edge e : edgesToBeRemoved)
-			fireEdgeRemoved(e);
+			removeEdge(e);
 		edgesToBeRemoved.clear();
 
 		// Traverse all nodes other than the ones to be removed and make sure
