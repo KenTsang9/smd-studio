@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.6.0-oem" class="java.beans.XMLDecoder"> 
+ <object class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph"> 
+  <void method="addNode"> 
+   <object class="uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties"> 
+    <void property="teamQuality"> 
+     <double>0.7</double> 
+    </void> 
+    <void property="trainingCost"> 
+     <double>2.5</double> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>601.0</double> 
+     <double>21.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ComplexModuleNode0" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.ComplexModuleNode"> 
+    <void method="addChild"> 
+     <object id="SimpleModuleNode0" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SimpleModuleNode"> 
+      <void property="description"> 
+       <void property="text"> 
+        <string>The First Leaf Module which is nested inside
+a Complex Module</string> 
+       </void> 
+      </void> 
+      <void property="cost"> 
+       <double>1.5</double> 
+      </void> 
+      <void property="name"> 
+       <string>Leaf Module 1</string> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="addChild"> 
+     <object id="SimpleModuleNode1" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SimpleModuleNode"> 
+      <void property="description"> 
+       <void property="text"> 
+        <string>This is the Second Leaf Module which is nested in a
+Complex Module</string> 
+       </void> 
+      </void> 
+      <void property="cost"> 
+       <double>3.0</double> 
+      </void> 
+      <void property="name"> 
+       <string>Leaf Module 2</string> 
+      </void> 
+     </object> 
+    </void> 
+    <void property="description"> 
+     <void property="text"> 
+      <string>&lt;i style=&quot;color:gray&quot;&gt;Easy way to design &lt;b&gt;&lt;i&gt;Software Modules Diagram&lt;/i&gt;&lt;/b&gt;.
+In &lt;b&gt;SMD Studio&lt;/b&gt; it is easy to format text using HTML tags.</string> 
+     </void> 
+    </void> 
+    <void property="name"> 
+     <string>Complex Module 1</string> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>100.0</double> 
+     <double>198.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object idref="SimpleModuleNode0"/> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>114.0</double> 
+     <double>264.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object idref="SimpleModuleNode1"/> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>476.0</double> 
+     <double>406.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ComplexModuleNode1" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.ComplexModuleNode"> 
+    <void method="addChild"> 
+     <object id="SimpleModuleNode2" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SimpleModuleNode"> 
+      <void property="description"> 
+       <void property="text"> 
+        <string>This is the Third Leaf Module</string> 
+       </void> 
+      </void> 
+      <void property="cost"> 
+       <double>4.9</double> 
+      </void> 
+      <void property="name"> 
+       <string>Leaf Module 3</string> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="addChild"> 
+     <object id="SimpleModuleNode3" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SimpleModuleNode"> 
+      <void property="description"> 
+       <void property="text"> 
+        <string>The Forth Leaf Module in the Complex
+Module 2</string> 
+       </void> 
+      </void> 
+      <void property="cost"> 
+       <double>7.5</double> 
+      </void> 
+      <void property="name"> 
+       <string>Leaf Module 4</string> 
+      </void> 
+     </object> 
+    </void> 
+    <void property="description"> 
+     <void property="text"> 
+      <string>This is another &lt;b&gt;Complex Module&lt;/b&gt; which 
+has a relation with &lt;i&gt;Complex Module 1&lt;/i&gt;.</string> 
+     </void> 
+    </void> 
+    <void property="name"> 
+     <string>Complex Module 2</string> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1070.0</double> 
+     <double>418.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="NoteNode0" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>Both Complex Modules are in relation using a transition edge</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>701.0</double> 
+     <double>728.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="PointNode0" class="uk.ac.sheffield.dcs.smdStudio.product.diagram.common.PointNode"> 
+    <void id="Rectangle2D$Double0" property="bounds"> 
+     <void method="setRect"> 
+      <double>674.0</double> 
+      <double>453.0</double> 
+      <double>0.0</double> 
+      <double>0.0</double> 
+     </void> 
+    </void> 
+    <void property="bounds"> 
+     <object idref="Rectangle2D$Double0"/> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>674.0</double> 
+     <double>453.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object idref="SimpleModuleNode2"/> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1079.0</double> 
+     <double>477.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object idref="SimpleModuleNode3"/> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1364.0</double> 
+     <double>530.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="connect"> 
+   <object class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.ModuleTransitionEdge"> 
+    <void method="connect"> 
+     <object idref="SimpleModuleNode0"/> 
+     <object idref="SimpleModuleNode1"/> 
+    </void> 
+    <void property="label"> 
+     <string>&lt;b style=&quot;color:blue&quot;&gt;Transaction between M1 and M2</string> 
+    </void> 
+    <void property="cost"> 
+     <double>1.2</double> 
+    </void> 
+   </object> 
+   <object idref="SimpleModuleNode0"/> 
+   <object idref="SimpleModuleNode1"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteEdge"> 
+    <void method="connect"> 
+     <object idref="NoteNode0"/> 
+     <object idref="PointNode0"/> 
+    </void> 
+   </object> 
+   <object idref="NoteNode0"/> 
+   <object idref="PointNode0"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteEdge"> 
+    <void method="connect"> 
+     <object idref="ComplexModuleNode1"/> 
+     <object idref="NoteNode0"/> 
+    </void> 
+   </object> 
+   <object idref="ComplexModuleNode1"/> 
+   <object idref="NoteNode0"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.ModuleTransitionEdge"> 
+    <void method="connect"> 
+     <object idref="ComplexModuleNode0"/> 
+     <object idref="ComplexModuleNode1"/> 
+    </void> 
+    <void property="label"> 
+     <string>Transition between Complex Modules 1&amp;2</string> 
+    </void> 
+    <void property="cost"> 
+     <double>4.0</double> 
+    </void> 
+   </object> 
+   <object idref="ComplexModuleNode0"/> 
+   <object idref="ComplexModuleNode1"/> 
+  </void> 
+ </object> 
+</java> 
