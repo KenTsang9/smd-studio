@@ -326,6 +326,10 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 							.toString()));
 			if (!isSmallSideBarPreferred) {
 				this.sideBar = new LargeSideBar(this);
+				if (this.graph != null) {
+					((LargeSideBar) this.sideBar)
+							.updateGraphProperties(this.graph.getProperties());
+				}
 			}
 			if (isSmallSideBarPreferred) {
 				this.sideBar = new SmallSideBar(this);
@@ -512,6 +516,8 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 			}
 
 			public void nodeAdded(Graph g, Node n, Point2D location) {
+//				reset the side toolbar to the select mode
+				getSideBar().getSideToolPanel().reset();
 				process();
 			}
 
@@ -538,9 +544,10 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 				getGraphPanel().doLayout();
 			}
 		});
-		((LargeSideBar) this.sideBar).updateGraphProperties(aGraph
-				.getProperties());
-		setSaveNeeded(false);
+		if (this.sideBar instanceof LargeSideBar) {
+			LargeSideBar largeSideBar = (LargeSideBar) this.sideBar;
+			largeSideBar.updateGraphProperties(aGraph.getProperties());
+		}
 		refreshDisplay();
 
 	}

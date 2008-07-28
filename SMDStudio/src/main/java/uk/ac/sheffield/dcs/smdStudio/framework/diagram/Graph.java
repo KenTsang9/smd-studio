@@ -9,7 +9,7 @@ import java.util.List;
 
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 
-public interface Graph {
+public interface Graph extends ExportableAsXML{
 
 	/**
 	 * Adds an edge to the graph that joins the nodes containing the given

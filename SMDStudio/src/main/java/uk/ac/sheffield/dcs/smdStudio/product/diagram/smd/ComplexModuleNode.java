@@ -85,6 +85,18 @@ public class ComplexModuleNode extends RectangularNode implements
 	private transient Rectangle2D top;
 
 	private Set<ModuleTransitionEdge> edges = new HashSet<ModuleTransitionEdge>();
+	
+	private int smdId;
+	
+	
+
+	public int getSMDId() {
+		return smdId;
+	}
+
+	public void setSMDId(int id) {
+		smdId = id;
+	}
 
 	/**
 	 * Construct a package node with a default size
@@ -324,6 +336,9 @@ public class ComplexModuleNode extends RectangularNode implements
 	@Override
 	public Element getAsXMLElement() {
 		Element element = new Element(RS.getElementName("element"));
+		Element eId = new Element(RS.getName("node.id"));
+		eId.setText(String.valueOf(smdId));
+		element.addContent(eId);
 		Element eName = new Element(RS.getElementName("name"));
 		eName.setText(name);
 		element.addContent(eName);
@@ -331,7 +346,7 @@ public class ComplexModuleNode extends RectangularNode implements
 		eDescription.setText(description.getText());
 		element.addContent(eDescription);
 		for (Node node : getChildren()) {
-			if (node.getParent() == null && node instanceof ExportableAsXML) {
+			if (node instanceof ExportableAsXML) {
 				ExportableAsXML xmlNode = (ExportableAsXML) node;
 				element.addContent(xmlNode.getAsXMLElement());
 			}

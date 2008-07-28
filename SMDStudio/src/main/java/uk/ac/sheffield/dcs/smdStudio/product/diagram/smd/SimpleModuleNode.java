@@ -73,6 +73,18 @@ public class SimpleModuleNode extends RectangularNode implements
 
 	private static final XMLResourceBoundle RS = new XMLResourceBoundle(
 			SimpleModuleNode.class);
+	
+	private int smdId;
+	
+	
+
+	public int getSMDId() {
+		return smdId;
+	}
+
+	public void setSMDId(int id) {
+		smdId = id;
+	}
 
 	/**
 	 * Construct a package node with a default size
@@ -243,12 +255,15 @@ public class SimpleModuleNode extends RectangularNode implements
 	@Override
 	public Element getAsXMLElement() {
 		Element element = new Element(RS.getElementName("element"));
+		Element eId = new Element(RS.getName("node.id"));
+		eId.setText(String.valueOf(smdId));
 		Element eCost = new Element(RS.getElementName("cost"));
 		eCost.setText(String.valueOf(cost));
 		Element eName = new Element(RS.getElementName("name"));
 		eName.setText(name);
 		Element eDescription = new Element(RS.getElementName("description"));
 		eDescription.setText(description.getText());
+		element.addContent(eId);
 		element.addContent(eCost);
 		element.addContent(eName);
 		element.addContent(eDescription);

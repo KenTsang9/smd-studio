@@ -39,6 +39,8 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 
 	private static final Node[] NODE_PROTOTYPES = new Node[3];
 
+	private int smdId=0;
+
 	static {
 		NODE_PROTOTYPES[0] = new SimpleModuleNode();
 		NODE_PROTOTYPES[1] = new ComplexModuleNode();
@@ -46,6 +48,24 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 
 		EDGE_PROTOTYPES[0] = new ModuleTransitionEdge();
 		EDGE_PROTOTYPES[1] = new NoteEdge();
+	}
+
+	@Override
+	public boolean addNode(Node newNode, Point2D p) {
+		if (super.addNode(newNode, p)) {
+			if (newNode instanceof SoftwareModuleDiagramObject) {
+				SoftwareModuleDiagramObject smo = (SoftwareModuleDiagramObject) newNode;
+				smo.setSMDId(++smdId);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void removeNode(Node n) {
+		super.removeNode(n);
+		smdId--;
 	}
 
 	@Override

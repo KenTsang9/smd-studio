@@ -138,10 +138,24 @@ public abstract class FileService {
 	}
 
 	/**
+	 * @return the extension filter for XML export
+	 */
+	public static ExtensionFilter getXMLExtensionFilter() {
+		return FileService.getExtensionFilter("xml");
+	}
+
+	/**
 	 * @return the string reprensentation of file extension for image export
 	 */
 	public static String getImageFileExtension() {
 		return FileService.getFileExtension("image");
+	}
+
+	/**
+	 * @return the string representation of file extension for XML export
+	 */
+	public static String getXMLFileExtension() {
+		return FileService.getFileExtension("xml");
 	}
 
 	/**

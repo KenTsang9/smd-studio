@@ -36,6 +36,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.jdom.Element;
+
+import uk.ac.sheffield.dcs.smdStudio.framework.resources.XMLResourceBoundle;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.PropertyUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.GraphProperties;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
@@ -62,6 +65,9 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	private GraphProperties properties;
 
 	private transient int recursiveRemoves;
+
+	private static final XMLResourceBoundle RS = new XMLResourceBoundle(
+			Graph.class);
 
 	/**
 	 * Adds a persistence delegate to a given encoder that encodes the child
@@ -133,10 +139,28 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 		return false;
 	}
 
+	@Override
+	public Element getAsXMLElement() {
+		Element element = new Element(RS.getElementName("element"));
+		for (Node node : nodes) {
+			if (node.getParent() == null && node instanceof ExportableAsXML) {
+				ExportableAsXML xmlNode = (ExportableAsXML) node;
+				element.addContent(xmlNode.getAsXMLElement());
+			}
+		}
+		for (Edge edge : edges) {
+			if (edge.getParent() == null && edge instanceof ExportableAsXML) {
+				ExportableAsXML xmlEdge = (ExportableAsXML) edge;
+				element.addContent(xmlEdge.getAsXMLElement());
+			}
+		}
+		return element;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeuk.ac.sheffield.dcs.smdStudio.framework.diagram.IGraph#
+	 * @seeuk.ac.sheffield.dcs.smdStudio.framework.diagram.Graph#
 	 * addGraphModificationListener
 	 * (uk.ac.sheffield.dcs.smdStudio.framework.diagram
 	 * .GraphModificationListener)

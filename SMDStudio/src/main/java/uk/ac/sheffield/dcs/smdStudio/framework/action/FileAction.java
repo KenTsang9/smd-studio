@@ -42,6 +42,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
+
 import uk.ac.sheffield.dcs.smdStudio.UMLEditor;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Graph;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.GraphService;
@@ -59,13 +63,12 @@ import uk.ac.sheffield.dcs.smdStudio.framework.gui.menu.FileMenu;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph;
 
-
 /**
  * This class concentrates actions that belong to the file menu
  * 
  * @author Alexandre de Pellegrin
  * 
- * EDITED Remote file opening has been removed
+ *         EDITED Remote file opening has been removed
  */
 public class FileAction {
 
@@ -356,6 +359,44 @@ public class FileAction {
 		optionPane.setMessage(label);
 		optionPane.setName(title);
 		DialogFactory.getInstance().showDialog(optionPane, title, true);
+	}
+
+	/**
+	 * Exports the given diagram as an XML File and shows a dialog box on the
+	 * parent frame when it is done.
+	 * 
+	 * @param diagramPanel
+	 * @param fileChooserService
+	 */
+	public void exportAsXML(DiagramPanel diagramPanel,
+			FileChooserService fileChooserService) {
+		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
+				|| diagramPanel.getGraphPanel().getGraph() == null)
+			return;
+
+		try {
+			String xmlExtensions = FileService.getXMLFileExtension();
+			ExtensionFilter extensionFilter = FileService
+					.getExtensionFilter(diagramPanel.getGraphPanel().getGraph());
+			ExtensionFilter exportFilter = FileService.getXMLExtensionFilter();
+			FileSaverHandler save = fileChooserService.save(null, diagramPanel
+					.getFilePath(), exportFilter, extensionFilter
+					.getExtensions()[0], xmlExtensions);
+			OutputStream out = save.getOutputStream();
+			if (out != null) {
+				try {
+					Element diagram = diagramPanel.getGraphPanel().getGraph()
+							.getAsXMLElement();
+					Document doc = new Document(diagram);
+					XMLOutputter xmlOut = new XMLOutputter();
+					xmlOut.output(doc, out);
+				} finally {
+					out.close();
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

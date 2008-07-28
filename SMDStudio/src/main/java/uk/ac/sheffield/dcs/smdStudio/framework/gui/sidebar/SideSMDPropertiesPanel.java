@@ -36,17 +36,13 @@ public class SideSMDPropertiesPanel extends JPanel {
 	 */
 	private JPanel panel;
 
-	private JSpinner trainingCost;
-
-	public void setTrainingCost(double cost) {
-		this.trainingCost.setValue(cost);
-	}
-
 	private JSlider teamQuality;
 
-	public void setTeamQuality(double teamQuality) {
-		this.teamQuality.setValue((int) (teamQuality * 10));
-	}
+	private ChangeListener teamQualityListener;
+
+	private JSpinner trainingCost;
+
+	private ChangeListener trainingCostListener;
 
 	/**
 	 * Default contructor
@@ -68,43 +64,23 @@ public class SideSMDPropertiesPanel extends JPanel {
 		panel.getSize();
 	}
 
-	private JPanel getTrainingPanel(ResourceBundle bundle) {
-		JPanel trainingPanel = new JPanel(new GridBagLayout());
+	private void doTeamQualityChanged(double teamQuality) {
+		diagramPanel.getGraph().changeTeamQuality(teamQuality);
 
-		initTrainingCost();
-		JLabel label = new JLabel(bundle.getString("trainingCost.text"));
-		label.setFont(new Font(label.getFont().getName(), Font.BOLD, label
-				.getFont().getSize() + 5));
-		// label.setForeground(Color.gray);
-
-		GridBagConstraints c = new GridBagConstraints();
-		c.weightx = 0.1;
-		c.fill = GridBagConstraints.BOTH;
-		trainingPanel.add(label, c);
-
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(0, 10, 0, 0);
-		trainingPanel.add(trainingCost, c);
-		trainingPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createRaisedBevelBorder(), BorderFactory
-						.createEmptyBorder(10, 10, 10, 10)));
-		return trainingPanel;
 	}
 
-	private void initTrainingCost() {
-		trainingCost = new JSpinner(new SpinnerNumberModel(0, 0, 1000, 0.5));
-		trainingCost.addChangeListener(new ChangeListener() {
+	private void doTrainingCostChanged(Number trainingCost) {
+		diagramPanel.getGraph().changeTrainingCost(trainingCost.doubleValue());
+	}
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				SpinnerModel numberModel = trainingCost.getModel();
-				if (numberModel instanceof SpinnerNumberModel) {
-					doTrainingCostChanged(((SpinnerNumberModel) numberModel)
-							.getNumber());
-				}
-
-			}
-		});
+	private JPanel getPanel() {
+		if (this.panel == null) {
+			this.panel = new JPanel();
+			this.panel.setOpaque(false);
+			this.panel.setBorder(new EmptyBorder(0, 5, 0, 0));
+			this.panel.setLayout(new BorderLayout());
+		}
+		return this.panel;
 	}
 
 	private JPanel getTeamQualityPanel(ResourceBundle bundle) {
@@ -131,6 +107,29 @@ public class SideSMDPropertiesPanel extends JPanel {
 		return teamQualityPanel;
 	}
 
+	private JPanel getTrainingPanel(ResourceBundle bundle) {
+		JPanel trainingPanel = new JPanel(new GridBagLayout());
+
+		initTrainingCost();
+		JLabel label = new JLabel(bundle.getString("trainingCost.text"));
+		label.setFont(new Font(label.getFont().getName(), Font.BOLD, label
+				.getFont().getSize() + 5));
+		// label.setForeground(Color.gray);
+
+		GridBagConstraints c = new GridBagConstraints();
+		c.weightx = 0.1;
+		c.fill = GridBagConstraints.BOTH;
+		trainingPanel.add(label, c);
+
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.insets = new Insets(0, 10, 0, 0);
+		trainingPanel.add(trainingCost, c);
+		trainingPanel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createRaisedBevelBorder(), BorderFactory
+						.createEmptyBorder(10, 10, 10, 10)));
+		return trainingPanel;
+	}
+
 	private void initTeamQuality(ResourceBundle bundle) {
 		teamQuality = new JSlider(JSlider.HORIZONTAL, 1, 20, 10);
 
@@ -149,7 +148,7 @@ public class SideSMDPropertiesPanel extends JPanel {
 		teamQuality.setPaintTicks(true);
 		teamQuality.setPaintLabels(true);
 
-		teamQuality.addChangeListener(new ChangeListener() {
+		teamQualityListener = new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -158,26 +157,37 @@ public class SideSMDPropertiesPanel extends JPanel {
 				}
 
 			}
-		});
+		};
+		teamQuality.addChangeListener(teamQualityListener);
 	}
 
-	private void doTeamQualityChanged(double teamQuality) {
-		diagramPanel.getGraph().changeTeamQuality(teamQuality);
+	private void initTrainingCost() {
+		trainingCost = new JSpinner(new SpinnerNumberModel(0, 0, 1000, 0.5));
+		trainingCostListener = new ChangeListener() {
 
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				SpinnerModel numberModel = trainingCost.getModel();
+				if (numberModel instanceof SpinnerNumberModel) {
+					doTrainingCostChanged(((SpinnerNumberModel) numberModel)
+							.getNumber());
+				}
+
+			}
+		};
+		trainingCost.addChangeListener(trainingCostListener);
 	}
 
-	private void doTrainingCostChanged(Number trainingCost) {
-		diagramPanel.getGraph().changeTrainingCost(trainingCost.doubleValue());
+	public void setTeamQuality(double teamQuality) {
+		this.teamQuality.removeChangeListener(teamQualityListener);
+		this.teamQuality.getModel().setValue((int) (teamQuality * 10));
+		this.teamQuality.addChangeListener(teamQualityListener);
 	}
 
-	private JPanel getPanel() {
-		if (this.panel == null) {
-			this.panel = new JPanel();
-			this.panel.setOpaque(false);
-			this.panel.setBorder(new EmptyBorder(0, 5, 0, 0));
-			this.panel.setLayout(new BorderLayout());
-		}
-		return this.panel;
+	public void setTrainingCost(double cost) {
+		this.trainingCost.removeChangeListener(trainingCostListener);
+		this.trainingCost.setValue(cost);
+		this.trainingCost.addChangeListener(trainingCostListener);
 	}
 
 }
