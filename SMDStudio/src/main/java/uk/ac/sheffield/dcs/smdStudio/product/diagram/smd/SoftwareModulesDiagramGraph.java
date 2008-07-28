@@ -26,7 +26,6 @@ import java.awt.geom.Point2D;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.AbstractGraph;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Edge;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.DiagramLinkNode;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteEdge;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
 
@@ -38,13 +37,12 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 
 	private static final Edge[] EDGE_PROTOTYPES = new Edge[2];
 
-	private static final Node[] NODE_PROTOTYPES = new Node[4];
+	private static final Node[] NODE_PROTOTYPES = new Node[3];
 
 	static {
 		NODE_PROTOTYPES[0] = new SimpleModuleNode();
 		NODE_PROTOTYPES[1] = new ComplexModuleNode();
 		NODE_PROTOTYPES[2] = new NoteNode();
-		NODE_PROTOTYPES[3] = new DiagramLinkNode();
 
 		EDGE_PROTOTYPES[0] = new ModuleTransitionEdge();
 		EDGE_PROTOTYPES[1] = new NoteEdge();
@@ -61,20 +59,21 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 			if (!(n1 instanceof NoteNode || n2 instanceof NoteNode)) {
 				return false;
 			}
-		}
-		if (n1.getParent() != n2.getParent()) {
-			return false;
-		}
-		if (n1 instanceof ComplexModuleNode) {
-			ComplexModuleNode node = (ComplexModuleNode) n1;
-			if (node.getChildren().contains(n2)) {
+		} else {
+			if (n1.getParent() != n2.getParent()) {
 				return false;
 			}
-		}
-		if (n2 instanceof ComplexModuleNode) {
-			ComplexModuleNode node = (ComplexModuleNode) n2;
-			if (node.getChildren().contains(n1)) {
-				return false;
+			if (n1 instanceof ComplexModuleNode) {
+				ComplexModuleNode node = (ComplexModuleNode) n1;
+				if (node.getChildren().contains(n2)) {
+					return false;
+				}
+			}
+			if (n2 instanceof ComplexModuleNode) {
+				ComplexModuleNode node = (ComplexModuleNode) n2;
+				if (node.getChildren().contains(n1)) {
+					return false;
+				}
 			}
 		}
 		return super.addEdgeAtPoints(e, p1, p2);

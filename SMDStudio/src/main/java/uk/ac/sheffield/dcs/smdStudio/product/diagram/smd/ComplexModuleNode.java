@@ -34,11 +34,15 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
+import org.jdom.Element;
+
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Edge;
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ExportableAsXML;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Grid;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.MultiLineString;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.RectangularNode;
+import uk.ac.sheffield.dcs.smdStudio.framework.resources.XMLResourceBoundle;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.GeometryUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
 
@@ -47,7 +51,11 @@ import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.NoteNode;
  */
 @SuppressWarnings("serial")
 public class ComplexModuleNode extends RectangularNode implements
-		SoftwareModuleDiagramObject {
+		SoftwareModuleDiagramObject, ExportableAsXML {
+
+	private static final XMLResourceBoundle RS = new XMLResourceBoundle(
+			ComplexModuleNode.class);
+
 	private static int DEFAULT_HEIGHT = 100;
 
 	private static int DEFAULT_COMPARTMENT_HEIGHT = 20;
@@ -311,5 +319,29 @@ public class ComplexModuleNode extends RectangularNode implements
 
 	public void removeEdge(ModuleTransitionEdge edge) {
 		edges.remove(edge);
+	}
+
+	@Override
+	public Element getAsXMLElement() {
+		Element element = new Element(RS.getElementName("element"));
+		Element eName = new Element(RS.getElementName("name"));
+		eName.setText(name);
+		element.addContent(eName);
+		Element eDescription = new Element(RS.getElementName("description"));
+		eDescription.setText(description.getText());
+		element.addContent(eDescription);
+		for (Node node : getChildren()) {
+			if (node.getParent() == null && node instanceof ExportableAsXML) {
+				ExportableAsXML xmlNode = (ExportableAsXML) node;
+				element.addContent(xmlNode.getAsXMLElement());
+			}
+		}
+		for (Edge edge : edges) {
+			if (edge instanceof ExportableAsXML) {
+				ExportableAsXML xmlEdge = (ExportableAsXML) edge;
+				element.addContent(xmlEdge.getAsXMLElement());
+			}
+		}
+		return element;
 	}
 }

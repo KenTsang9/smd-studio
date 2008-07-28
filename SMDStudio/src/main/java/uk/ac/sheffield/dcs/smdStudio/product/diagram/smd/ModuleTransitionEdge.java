@@ -31,17 +31,21 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JLabel;
 
+import org.jdom.Element;
+
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ArrowHead;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Direction;
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ExportableAsXML;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ShapeEdge;
+import uk.ac.sheffield.dcs.smdStudio.framework.resources.XMLResourceBoundle;
 
 /**
  * A curved edge for a state transition in a state diagram.
  */
 @SuppressWarnings("serial")
 public class ModuleTransitionEdge extends ShapeEdge implements
-		SoftwareModuleDiagramObject {
+		SoftwareModuleDiagramObject, ExportableAsXML {
 	private static JLabel label = new JLabel();
 
 	private double angle;
@@ -51,6 +55,9 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 	private String labelText = "";
 
 	private ComplexModuleNode parent;
+
+	private static final XMLResourceBoundle RS = new XMLResourceBoundle(
+			ModuleTransitionEdge.class);
 
 	public void draw(Graphics2D g2) {
 		g2.draw(getShape());
@@ -213,6 +220,18 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 		if (parent != null) {
 			parent.removeEdge(this);
 		}
+	}
+
+	@Override
+	public Element getAsXMLElement() {
+		Element element = new Element(RS.getElementName("element"));
+		Element eCost = new Element(RS.getElementName("cost"));
+		eCost.setText(String.valueOf(cost));
+		element.addContent(eCost);
+		Element eLabel = new Element(RS.getElementName("label"));
+		eLabel.setText(labelText);
+		element.addContent(eLabel);
+		return element;
 	}
 
 }
