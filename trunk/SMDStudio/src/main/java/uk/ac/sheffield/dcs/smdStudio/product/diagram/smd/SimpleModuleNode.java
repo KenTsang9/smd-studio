@@ -30,10 +30,14 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JLabel;
 
+import org.jdom.Element;
+
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ExportableAsXML;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Grid;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.MultiLineString;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.RectangularNode;
+import uk.ac.sheffield.dcs.smdStudio.framework.resources.XMLResourceBoundle;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.GeometryUtils;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.PointNode;
 
@@ -42,7 +46,7 @@ import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.PointNode;
  */
 @SuppressWarnings("serial")
 public class SimpleModuleNode extends RectangularNode implements
-		SoftwareModuleDiagramObject {
+		SoftwareModuleDiagramObject, ExportableAsXML {
 	private static JLabel costLabel = new JLabel();
 
 	private static int DEFAULT_COMPARTMENT_HEIGHT = 20;
@@ -66,6 +70,9 @@ public class SimpleModuleNode extends RectangularNode implements
 	private String name;
 
 	private transient Rectangle2D top;
+
+	private static final XMLResourceBoundle RS = new XMLResourceBoundle(
+			SimpleModuleNode.class);
 
 	/**
 	 * Construct a package node with a default size
@@ -231,6 +238,21 @@ public class SimpleModuleNode extends RectangularNode implements
 		GeometryUtils.translate(top, dx, dy);
 		GeometryUtils.translate(mid, dx, dy);
 		super.translate(dx, dy);
+	}
+
+	@Override
+	public Element getAsXMLElement() {
+		Element element = new Element(RS.getElementName("element"));
+		Element eCost = new Element(RS.getElementName("cost"));
+		eCost.setText(String.valueOf(cost));
+		Element eName = new Element(RS.getElementName("name"));
+		eName.setText(name);
+		Element eDescription = new Element(RS.getElementName("description"));
+		eDescription.setText(description.getText());
+		element.addContent(eCost);
+		element.addContent(eName);
+		element.addContent(eDescription);
+		return element;
 	}
 
 }

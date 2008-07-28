@@ -28,7 +28,7 @@ import java.beans.SimpleBeanInfo;
 /**
  * The bean info for the SimpleModuleNode type.
  */
-public class SimpleModuleNodeBeanInfo extends SimpleBeanInfo {
+public class ModuleTransitionEdgeBeanInfo extends SimpleBeanInfo {
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -36,19 +36,16 @@ public class SimpleModuleNodeBeanInfo extends SimpleBeanInfo {
 	 */
 	public PropertyDescriptor[] getPropertyDescriptors() {
 		try {
-			PropertyDescriptor costDescriptor = new PropertyDescriptor("cost",
-					SimpleModuleNode.class);
-			costDescriptor.setValue("priority", new Integer(1));
-			PropertyDescriptor nameDescriptor = new PropertyDescriptor("name",
-					SimpleModuleNode.class);
+			PropertyDescriptor transitionCostDescriptor = new PropertyDescriptor(
+					"transitionCost", ModuleTransitionEdge.class, "getCost",
+					"setCost");
+			transitionCostDescriptor.setValue("priority", new Integer(1));
+			PropertyDescriptor nameDescriptor = new PropertyDescriptor("label",
+					ModuleTransitionEdge.class);
 			nameDescriptor.setValue("priority", new Integer(2));
-			PropertyDescriptor descriptionDescriptor = new PropertyDescriptor(
-					"description", SimpleModuleNode.class);
-			descriptionDescriptor.setValue("priority", new Integer(3));
-			return new PropertyDescriptor[] {  costDescriptor,nameDescriptor,
-					descriptionDescriptor, };
+			return new PropertyDescriptor[] { transitionCostDescriptor,
+					nameDescriptor, };
 		} catch (IntrospectionException exception) {
-			exception.printStackTrace();
 			return null;
 		}
 	}
