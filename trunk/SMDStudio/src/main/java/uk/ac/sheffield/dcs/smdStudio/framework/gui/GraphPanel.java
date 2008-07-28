@@ -47,7 +47,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import uk.ac.sheffield.dcs.smdStudio.UMLEditor;
-import uk.ac.sheffield.dcs.smdStudio.framework.diagram.DiagramLink;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Edge;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Graph;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Grid;
@@ -56,8 +55,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.SideToolPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.Tool;
 import uk.ac.sheffield.dcs.smdStudio.framework.history.HistoryManager;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.DiagramLinkNode;
-
 
 /**
  * A panel to draw a graph
@@ -113,8 +110,8 @@ public class GraphPanel extends JPanel {
 				} else if (selectedTool instanceof Node) {
 					Node prototype = (Node) selectedTool;
 					Node newNode = (Node) prototype.clone(); // GraphService.
-																// cloneNode
-																// (prototype);
+					// cloneNode
+					// (prototype);
 					boolean added = addNodeAtPoint(newNode, mousePoint);
 					if (added) {
 						selectionHandler.setSelectedElement(newNode);
@@ -142,8 +139,8 @@ public class GraphPanel extends JPanel {
 				if (dragMode == DRAG_RUBBERBAND) {
 					Edge prototype = (Edge) selectedTool;
 					Edge newEdge = (Edge) prototype.clone(); // GraphService.
-																// cloneEdge
-																// (prototype);
+					// cloneEdge
+					// (prototype);
 					boolean added = addEdgeAtPoints(newEdge, mouseDownPoint,
 							mousePoint);
 					if (added) {
@@ -189,12 +186,12 @@ public class GraphPanel extends JPanel {
 
 					for (Node n : selectedNodes) {
 						if (!selectedNodes.contains(n.getParent())) // parents
-																	// are
-																	// responsible
-																	// for
-																	// translating
-																	// their
-																	// children
+							// are
+							// responsible
+							// for
+							// translating
+							// their
+							// children
 							n.translate(dx, dy);
 					}
 				} else if (dragMode == DRAG_LASSO) {
@@ -258,14 +255,6 @@ public class GraphPanel extends JPanel {
 
 		sheet.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(final PropertyChangeEvent event) {
-				if (event.getSource() instanceof DiagramLinkNode) {
-					DiagramLinkNode ln = (DiagramLinkNode) event.getSource();
-					DiagramLink dl = ln.getDiagramLink();
-					if (dl != null && dl.getOpenFlag().booleanValue()) {
-						diagramPanel.fireMustOpenFile(dl.getURL());
-						dl.setOpenFlag(new Boolean(false));
-					}
-				}
 
 				graph.changeNodeOrEdgeProperty(event);
 				graph.layout((Graphics2D) getGraphics(), grid);
@@ -648,8 +637,6 @@ public class GraphPanel extends JPanel {
 	private Graph graph;
 
 	private Grid grid;
-
-	private DiagramPanel diagramPanel;
 
 	private double zoom;
 

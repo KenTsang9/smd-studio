@@ -60,11 +60,8 @@ import javax.swing.event.DocumentListener;
 
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ChoiceList;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ChoiceListEditor;
-import uk.ac.sheffield.dcs.smdStudio.framework.diagram.DiagramLink;
-import uk.ac.sheffield.dcs.smdStudio.framework.diagram.DiagramLinkEditor;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.SerializableEnumeration;
-
 
 /**
  * A component filled with editors for all editable properties of an object.
@@ -94,7 +91,6 @@ public class PropertySheet {
 		editors = new HashMap<Class<?>, Class<? extends PropertyEditor>>();
 		editors.put(String.class, StringEditor.class);
 		editors.put(java.awt.Color.class, ColorEditor.class);
-		editors.put(DiagramLink.class, DiagramLinkEditor.class);
 		editors.put(ChoiceList.class, ChoiceListEditor.class);
 	}
 
@@ -127,9 +123,9 @@ public class PropertySheet {
 	 *            the object whose properties are being edited
 	 * @param parent
 	 *            the parent component
-	 *
 	 * 
-	 * EDITED changed from formlayout to gridbag layout
+	 * 
+	 *            EDITED changed from formlayout to gridbag layout
 	 */
 	public PropertySheet(Object bean) {
 		panel = new JPanel();
@@ -165,6 +161,8 @@ public class PropertySheet {
 					ResourceBundleConstant.NODE_AND_EDGE_STRINGS, Locale
 							.getDefault());
 			for (int i = 0; i < descriptors.length; i++) {
+				if (descriptors[i].isHidden())
+					continue;
 				PropertyEditor editor = getEditor(bean, descriptors[i]);
 				if (editor != null) {
 					// Try to extract title from resource bundle

@@ -22,7 +22,8 @@
 package uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar;
 
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -32,16 +33,28 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import uk.ac.sheffield.dcs.smdStudio.framework.action.FileAction;
+import uk.ac.sheffield.dcs.smdStudio.framework.file.FileChooserService;
+import uk.ac.sheffield.dcs.smdStudio.framework.file.FileChooserServiceFactory;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.DiagramPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.theme.ThemeManager;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceFactory;
-import uk.ac.sheffield.dcs.smdStudio.framework.swingextension.IconButtonUI;
-
 
 // EDITED Remote file functions has been removed
 @SuppressWarnings("serial")
 public class SideShortcutOptionalPanel extends JPanel implements
 		ISideShortcutOptionalPanel {
+
+	/**
+	 * Current diagram panel
+	 */
+	private DiagramPanel diagramPanel;
+
+	/**
+	 * "File" action manager
+	 */
+	private FileAction fileAction;
+
+	private FileChooserService fileChooserService;
 
 	/**
 	 * Default contructor
@@ -52,34 +65,53 @@ public class SideShortcutOptionalPanel extends JPanel implements
 		// this.helpAction = new HelpAction();
 		this.fileAction = new FileAction();
 
+		this.fileChooserService = FileChooserServiceFactory.getInstance();
+
 		setBackground(ThemeManager.getInstance().getTheme()
 				.getSIDEBAR_ELEMENT_BACKGROUND_COLOR());
 		ResourceFactory factory = new ResourceFactory(sideBarResourceBundle);
 
-		// JButton bHelp = getHelpButton(factory);
-		// addButton(bHelp);
+		JPanel mainPanel = new JPanel(new GridBagLayout());
+
+		GridBagConstraints c = new GridBagConstraints();
+		// c.gridwidth = GridBagConstraints.REMAINDER;
+		c.weightx = 0.1;
+		c.fill = GridBagConstraints.BOTH;
 
 		JButton bPrint = getPrintButton(factory);
-		addButton(bPrint);
+		mainPanel.add(bPrint, c);
 
 		JButton bExportToClipboard = getExportToClipboardButton(factory);
-		addButton(bExportToClipboard);
+		mainPanel.add(bExportToClipboard, c);
 
-		this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		add(getPanel());
+		JButton bExportAsXML = getExportAsXMLButton(factory);
+		mainPanel.add(bExportAsXML, c);
+		mainPanel.setOpaque(false);
+		mainPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
+
+		this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		this.add(mainPanel);
 
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideShortcutOptionalPanel
-	 * #addButton(javax.swing.JButton)
+	 * @seeuk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.
+	 * ISideShortcutOptionalPanel #addButton(javax.swing.JButton)
 	 */
 	public void addButton(JButton aButton) {
-		aButton.setUI(new IconButtonUI());
-		getPanel().add(aButton);
+		throw new IllegalStateException();
+	}
+
+	private JButton getExportAsXMLButton(ResourceFactory factory) {
+		JButton bExportAsXML = factory.createButton("export_as_xml");
+		bExportAsXML.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				performExportAsXML();
+			}
+		});
+		return bExportAsXML;
 	}
 
 	private JButton getExportToClipboardButton(ResourceFactory factory) {
@@ -93,16 +125,6 @@ public class SideShortcutOptionalPanel extends JPanel implements
 		return bExportToClipboard;
 	}
 
-	private JButton getPrintButton(ResourceFactory factory) {
-		JButton bPrint = factory.createButton("print");
-		bPrint.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				performPrint();
-			}
-		});
-		return bPrint;
-	}
-
 	@SuppressWarnings("unused")
 	private JButton getHelpButton(ResourceFactory factory) {
 		JButton bHelp = factory.createButton("help");
@@ -114,42 +136,30 @@ public class SideShortcutOptionalPanel extends JPanel implements
 		return bHelp;
 	}
 
-	private JPanel getPanel() {
-		if (this.panel == null) {
-			this.panel = new JPanel();
-			this.panel.setOpaque(false);
-			this.panel.setBorder(new EmptyBorder(0, 5, 0, 0));
-			GridLayout layout = new GridLayout(0, 5, 15, 10);
-			this.panel.setLayout(layout);
-		}
-		return this.panel;
+	private JButton getPrintButton(ResourceFactory factory) {
+		JButton bPrint = factory.createButton("print");
+		bPrint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				performPrint();
+			}
+		});
+		return bPrint;
 	}
 
-	private void performShowHelp() {
-		// TODO : insert direct link to website
-	}
-
-	private void performPrint() {
-		fileAction.print(diagramPanel);
+	private void performExportAsXML() {
+		fileAction.exportAsXML(diagramPanel, fileChooserService);
 	}
 
 	private void performExportToClipboard() {
 		fileAction.exportToClipboard(diagramPanel);
 	}
 
-	/**
-	 * "File" action manager
-	 */
-	private FileAction fileAction;
+	private void performPrint() {
+		fileAction.print(diagramPanel);
+	}
 
-	/**
-	 * Current diagram panel
-	 */
-	private DiagramPanel diagramPanel;
-
-	/**
-	 * Component(s panel
-	 */
-	private JPanel panel;
+	private void performShowHelp() {
+		// TODO : insert direct link to website
+	}
 
 }

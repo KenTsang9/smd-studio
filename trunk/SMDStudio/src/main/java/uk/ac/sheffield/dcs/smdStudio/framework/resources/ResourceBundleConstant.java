@@ -45,4 +45,6 @@ public interface ResourceBundleConstant {
 	
 	public static final String NODE_AND_EDGE_STRINGS = "properties.NodeAndEdgeStrings";
 
+	public static final String XML_STRINGS = "properties.XMLStrings";
+
 }

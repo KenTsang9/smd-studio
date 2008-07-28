@@ -31,17 +31,21 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.jdom.Element;
+
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Edge;
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ExportableAsXML;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Grid;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.MultiLineString;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.RectangularNode;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
+import uk.ac.sheffield.dcs.smdStudio.framework.resources.XMLResourceBoundle;
 
 /**
  * A note node in a UML diagram.
  */
 @SuppressWarnings("serial")
-public class GraphProperties extends RectangularNode {
+public class GraphProperties extends RectangularNode implements ExportableAsXML {
 
 	private static Color DEFAULT_COLOR = new Color(151, 168, 220);
 
@@ -57,9 +61,37 @@ public class GraphProperties extends RectangularNode {
 
 	private Color color;
 
+	private ResourceBundle resourceBundle;
+
+	private double teamQuality;
+
+	private String teamQualityText = "";
+
+	private MultiLineString text;
+
+	private String totalCostText = "";
+
 	private double trainingCost;
 
-	private double teamQuality = 1;
+	private String trainingCostText = "";
+
+	private static final XMLResourceBoundle RS = new XMLResourceBoundle(
+			GraphProperties.class);
+
+	/**
+	 * Construct a note node with a default size and color
+	 */
+	public GraphProperties() {
+		if (teamQuality == 0) {
+			teamQuality = 1;
+		}
+		text = new MultiLineString();
+		text.setJustification(MultiLineString.CENTER);
+		text.setSize(MultiLineString.LARGE);
+		updateText();
+		color = DEFAULT_COLOR;
+		setBounds(new Rectangle2D.Double(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT));
+	}
 
 	public String calculateTotalCost() {
 		String notAvailable = resourceBundle
@@ -73,77 +105,6 @@ public class GraphProperties extends RectangularNode {
 		}
 		totalCost = totalCost * teamQuality + trainingCost;
 		return new DecimalFormat("0.##").format(totalCost);
-	}
-
-	public double getTeamQuality() {
-		return teamQuality;
-	}
-
-	public void setTeamQuality(double teamQuality) {
-		this.teamQuality = teamQuality;
-		updateText();
-	}
-
-	public double getTrainingCost() {
-		return trainingCost;
-	}
-
-	private MultiLineString text;
-
-	private ResourceBundle resourceBundle;
-
-	private String trainingCostText = "";
-
-	private String teamQualityText = "";
-
-	private String totalCostText = "";
-
-	/**
-	 * Construct a note node with a default size and color
-	 */
-	public GraphProperties() {
-		setBounds(new Rectangle2D.Double(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT));
-		text = new MultiLineString();
-		text.setJustification(MultiLineString.CENTER);
-		text.setSize(MultiLineString.LARGE);
-		updateText();
-		color = DEFAULT_COLOR;
-	}
-
-	private void updateText() {
-		boolean changed = false;
-		String prefix = getGeneralGraphResourceBundle().getString(
-				"graph.trainingCost.text");
-		String sTrainingCost = getLabelValueFormatedText(prefix, String
-				.valueOf(trainingCost));
-		changed = changed ? true : trainingCostText.equals(sTrainingCost);
-		trainingCostText = sTrainingCost;
-		prefix = getGeneralGraphResourceBundle().getString(
-				"graph.teamQuality.text");
-		String sTeamQuality = getLabelValueFormatedText(prefix, String
-				.valueOf(teamQuality));
-		changed = changed ? true : teamQualityText.equals(sTeamQuality);
-		teamQualityText = sTeamQuality;
-		String sTotalCost = formatCostText();
-		changed = changed ? true : totalCostText.equals(sTotalCost);
-		totalCostText = sTotalCost;
-		text.setText(sTotalCost + "<br/><br/>" + sTeamQuality + "<br/><br/>"
-				+ sTrainingCost);
-		if (changed && getGraph() != null) {
-			getGraph().repaint();
-		}
-	}
-
-	private String formatCostText() {
-		String label = getGeneralGraphResourceBundle().getString(
-				"graph.totalCost.text");
-		return "<font face=\"comic sans ms\" size=\"7\" color=\"red\">" + label
-				+ ": " + calculateTotalCost() + "</font>";
-	}
-
-	private String getLabelValueFormatedText(String label, String value) {
-		return "<font face=\"comic sans ms\">" + label + ": " + value
-				+ "</font>";
 	}
 
 	@Override
@@ -185,6 +146,13 @@ public class GraphProperties extends RectangularNode {
 		text.draw(g2, getBounds());
 	}
 
+	private String formatCostText() {
+		String label = getGeneralGraphResourceBundle().getString(
+				"graph.totalCost.text");
+		return "<font face=\"comic sans ms\" size=\"7\" color=\"red\">" + label
+				+ ": " + calculateTotalCost() + "</font>";
+	}
+
 	/**
 	 * Gets the value of the color property.
 	 * 
@@ -194,8 +162,26 @@ public class GraphProperties extends RectangularNode {
 		return color;
 	}
 
+	/**
+	 * @return resource bundle
+	 */
+	private ResourceBundle getGeneralGraphResourceBundle() {
+		if (this.resourceBundle == null) {
+			this.resourceBundle = ResourceBundle.getBundle(
+					ResourceBundleConstant.GENERAL_GRAPH_STRINGS, Locale
+							.getDefault());
+		}
+		return this.resourceBundle;
+	}
+
+	private String getLabelValueFormatedText(String label, String value) {
+		return "<font face=\"comic sans ms\">" + label + ": " + value
+				+ "</font>";
+	}
+
 	@Override
 	public Shape getShape() {
+		updateText();
 		Rectangle2D bounds = getBounds();
 		GeneralPath path = new GeneralPath();
 		path.moveTo((float) bounds.getX(), (float) bounds.getY());
@@ -207,6 +193,10 @@ public class GraphProperties extends RectangularNode {
 		return path;
 	}
 
+	public double getTeamQuality() {
+		return teamQuality;
+	}
+
 	/**
 	 * Gets the value of the text property.
 	 * 
@@ -214,6 +204,10 @@ public class GraphProperties extends RectangularNode {
 	 */
 	public MultiLineString getText() {
 		return text;
+	}
+
+	public double getTrainingCost() {
+		return trainingCost;
 	}
 
 	@Override
@@ -239,20 +233,49 @@ public class GraphProperties extends RectangularNode {
 		color = newValue;
 	}
 
+	public void setTeamQuality(double teamQuality) {
+		this.teamQuality = teamQuality;
+		updateText();
+	}
+
 	public void setTrainingCost(double trainingCost) {
 		this.trainingCost = trainingCost;
 		updateText();
 	}
 
-	/**
-	 * @return resource bundle
-	 */
-	private ResourceBundle getGeneralGraphResourceBundle() {
-		if (this.resourceBundle == null) {
-			this.resourceBundle = ResourceBundle.getBundle(
-					ResourceBundleConstant.GENERAL_GRAPH_STRINGS, Locale
-							.getDefault());
+	private void updateText() {
+		boolean changed = false;
+		String prefix = getGeneralGraphResourceBundle().getString(
+				"graph.trainingCost.text");
+		String sTrainingCost = getLabelValueFormatedText(prefix, String
+				.valueOf(trainingCost));
+		changed = changed ? true : trainingCostText.equals(sTrainingCost);
+		trainingCostText = sTrainingCost;
+		prefix = getGeneralGraphResourceBundle().getString(
+				"graph.teamQuality.text");
+		String sTeamQuality = getLabelValueFormatedText(prefix, String
+				.valueOf(teamQuality));
+		changed = changed ? true : teamQualityText.equals(sTeamQuality);
+		teamQualityText = sTeamQuality;
+		String sTotalCost = formatCostText();
+		changed = changed ? true : totalCostText.equals(sTotalCost);
+		totalCostText = sTotalCost;
+		text.setText(sTotalCost + "<br/><br/>" + sTeamQuality + "<br/><br/>"
+				+ sTrainingCost);
+		if (changed && getGraph() != null) {
+			getGraph().repaint();
 		}
-		return this.resourceBundle;
+	}
+
+	@Override
+	public Element getAsXMLElement() {
+		Element element = new Element(RS.getElementName("element"));
+		Element eTrainingCost = new Element(RS.getElementName("trainingcost"));
+		eTrainingCost.setText(String.valueOf(trainingCost));
+		element.addContent(eTrainingCost);
+		Element eTeamQuality = new Element(RS.getElementName("teamquality"));
+		eTeamQuality.setText(String.valueOf(teamQuality));
+		element.addContent(eTeamQuality);
+		return element;
 	}
 }

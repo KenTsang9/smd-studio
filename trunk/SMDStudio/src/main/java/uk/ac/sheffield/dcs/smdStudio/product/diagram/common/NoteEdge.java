@@ -30,14 +30,15 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Direction;
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Node;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ShapeEdge;
-
 
 /**
  * A dotted line that connects a note to its attachment.
  */
 @SuppressWarnings("serial")
 public class NoteEdge extends ShapeEdge {
+
 	public void draw(Graphics2D g2) {
 		Stroke oldStroke = g2.getStroke();
 		g2.setStroke(DOTTED_STROKE);
@@ -67,4 +68,10 @@ public class NoteEdge extends ShapeEdge {
 	private static Stroke DOTTED_STROKE = new BasicStroke(1.0f,
 			BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.0f, new float[] {
 					3.0f, 3.0f }, 0.0f);
+
+	@Override
+	public Node getParent() {
+		// TODO implement if necessary
+		return null;
+	}
 }

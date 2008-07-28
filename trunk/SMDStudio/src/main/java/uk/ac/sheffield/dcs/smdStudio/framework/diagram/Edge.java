@@ -116,5 +116,7 @@ public interface Edge extends Serializable, Cloneable
     void incrementRevision();    
 
     Edge clone();
+
+	Node getParent();
     
 }

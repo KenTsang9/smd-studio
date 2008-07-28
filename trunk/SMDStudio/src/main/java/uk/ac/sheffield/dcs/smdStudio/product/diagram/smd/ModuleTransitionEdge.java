@@ -56,8 +56,26 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 
 	private ComplexModuleNode parent;
 
+	public Node getParent() {
+		return parent;
+	}
+
+	public void setParent(ComplexModuleNode parent) {
+		this.parent = parent;
+	}
+
 	private static final XMLResourceBoundle RS = new XMLResourceBoundle(
 			ModuleTransitionEdge.class);
+
+	private int smdId;
+
+	public int getSMDId() {
+		return smdId;
+	}
+
+	public void setSMDId(int id) {
+		smdId = id;
+	}
 
 	public void draw(Graphics2D g2) {
 		g2.draw(getShape());
@@ -225,6 +243,14 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 	@Override
 	public Element getAsXMLElement() {
 		Element element = new Element(RS.getElementName("element"));
+		Element eStart = new Element(RS.getElementName("start"));
+		eStart.setText(String.valueOf(((SoftwareModuleDiagramObject) this
+				.getStart()).getSMDId()));
+		element.addContent(eStart);
+		Element eEnd = new Element(RS.getElementName("end"));
+		eEnd.setText(String.valueOf(((SoftwareModuleDiagramObject) this
+				.getEnd()).getSMDId()));
+		element.addContent(eEnd);
 		Element eCost = new Element(RS.getElementName("cost"));
 		eCost.setText(String.valueOf(cost));
 		element.addContent(eCost);

@@ -21,6 +21,7 @@
 
 package uk.ac.sheffield.dcs.smdStudio.product.diagram.common;
 
+import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
 
@@ -34,6 +35,17 @@ public class GraphPropertiesBeanInfo extends SimpleBeanInfo {
 	 * @see java.beans.BeanInfo#getPropertyDescriptors()
 	 */
 	public PropertyDescriptor[] getPropertyDescriptors() {
-		return new PropertyDescriptor[0];
+		try {
+			PropertyDescriptor trainingCostDescriptor = new PropertyDescriptor(
+					"trainingCost", GraphProperties.class);
+			trainingCostDescriptor.setHidden(true);
+			PropertyDescriptor teamQualityDescriptor = new PropertyDescriptor(
+					"teamQuality", GraphProperties.class);
+			teamQualityDescriptor.setHidden(true);
+			return new PropertyDescriptor[] { trainingCostDescriptor,
+					teamQualityDescriptor, };
+		} catch (IntrospectionException exception) {
+			return null;
+		}
 	}
 }

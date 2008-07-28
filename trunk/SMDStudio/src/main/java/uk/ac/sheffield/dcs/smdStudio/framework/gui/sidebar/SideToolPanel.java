@@ -49,6 +49,16 @@ import uk.ac.sheffield.dcs.smdStudio.framework.swingextension.CustomToggleButton
 @SuppressWarnings("serial")
 public class SideToolPanel extends JPanel implements ISideToolPanel
 {
+    private List<CustomToggleButton> edgeButtons;
+
+    private List<Tool> edgeTools;
+
+    private List<Listener> listeners = new ArrayList<Listener>();
+
+    private List<CustomToggleButton> nodeButtons;
+
+    private List<Tool> nodeTools;
+
     /**
      * Constructs a tool bar with no icons.
      */
@@ -63,17 +73,14 @@ public class SideToolPanel extends JPanel implements ISideToolPanel
         reset();
     }
 
-    /**
-     * Fills current panel with toggle buttons
+    /*
+     * (non-Javadoc)
+     * 
+     * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideToolPanel#addListener(uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.SideToolPanel.Listener)
      */
-    private void fillPanel()
+    public void addListener(Listener listener)
     {
-        removeAll();
-        JPanel nodeButtonsPanel = getButtonPanel(nodeButtons);
-        JPanel edgeButtonsPanel = getButtonPanel(edgeButtons);
-        setLayout(new BorderLayout());
-        add(nodeButtonsPanel, BorderLayout.NORTH);
-        add(edgeButtonsPanel, BorderLayout.SOUTH);
+        this.listeners.add(listener);
     }
 
     /*
@@ -91,61 +98,73 @@ public class SideToolPanel extends JPanel implements ISideToolPanel
     }
 
     /**
-     * Returns standard node tools associated to a graph
-     * 
-     * @param graph
-     * @return tools collection
+     * Fills current panel with toggle buttons
      */
-    private List<Tool> getStandardNodeTools(Graph graph)
+    private void fillPanel()
     {
-        Node[] nodeTypes = graph.getNodePrototypes();
-        List<Tool> tools = new ArrayList<Tool>();
-        Tool firstTool = getSelectionTool();
-        tools.add(firstTool);
-        if (nodeTypes.length == 0)
-        {
-            return tools;
-        }
-        ResourceBundle graphResources = ResourceBundleUtils.getStringsResourceBundleForObject(graph);
-        for (int i = 0; i < nodeTypes.length; i++)
-        {
-            String label = graphResources.getString("node" + (i + 1) + ".tooltip");
-            Tool aTool = new Tool(nodeTypes[i], label);
-            tools.add(aTool);
-        }
-        return tools;
+        removeAll();
+        JPanel nodeButtonsPanel = getButtonPanel(nodeButtons);
+        JPanel edgeButtonsPanel = getButtonPanel(edgeButtons);
+        setLayout(new BorderLayout());
+        add(nodeButtonsPanel, BorderLayout.NORTH);
+        add(edgeButtonsPanel, BorderLayout.SOUTH);
     }
 
     /**
-     * Returns standard edge tools associated to a graph
+     * Remenbers selected tool and informs all listeners about this change
      * 
-     * @param graph
-     * @return tools collection
+     * @param nodeOrEdge
      */
-    private List<Tool> getStandardEdgeTools(Graph graph)
+    private void fireToolChangeEvent(Tool tool)
     {
-        Edge[] edgeTypes = graph.getEdgePrototypes();
-        List<Tool> tools = new ArrayList<Tool>();
-        if (edgeTypes.length == 0)
+        Iterator<Listener> it = this.listeners.iterator();
+        while (it.hasNext())
         {
-            return tools;
+            Listener listener = it.next();
+            listener.toolSelectionChanged(tool);
         }
-        ResourceBundle graphResources = ResourceBundleUtils.getStringsResourceBundleForObject(graph);
-        for (int i = 0; i < edgeTypes.length; i++)
-        {
-            String label = graphResources.getString("edge" + (i + 1) + ".tooltip");
-            Tool aTool = new Tool(edgeTypes[i], label);
-            tools.add(aTool);
-        }
-        return tools;
     }
 
     /**
-     * @return selection tool (which refers to a special constructor
+     * Creates a panel that contains custom toggle buttons. Also sets mouse listeners.
+     * 
+     * @param buttons to be added to this panel
+     * @return JPanel
      */
-    private Tool getSelectionTool()
+    private JPanel getButtonPanel(List<CustomToggleButton> buttons)
     {
-        return new Tool();
+        JPanel buttonPanel = new JPanel();
+        for (final CustomToggleButton button : buttons)
+        {
+            button.addMouseListener(new MouseAdapter()
+            {
+                public void mouseClicked(MouseEvent arg0)
+                {
+                    setSelectedButton(button);
+                }
+            });
+            buttonPanel.add(button);
+        }
+
+        buttonPanel.setLayout(new GridLayout(0, 1));
+        buttonPanel.addMouseWheelListener(new MouseWheelListener()
+        {
+
+            public void mouseWheelMoved(MouseWheelEvent e)
+            {
+                int scroll = e.getUnitsToScroll();
+                if (scroll > 0)
+                {
+                    selectNextButton();
+                }
+                if (scroll < 0)
+                {
+                    selectPreviousButton();
+                }
+            }
+
+        });
+        return buttonPanel;
     }
 
     /**
@@ -194,6 +213,64 @@ public class SideToolPanel extends JPanel implements ISideToolPanel
     }
 
     /**
+     * @return selection tool (which refers to a special constructor
+     */
+    private Tool getSelectionTool()
+    {
+        return new Tool();
+    }
+
+    /**
+     * Returns standard edge tools associated to a graph
+     * 
+     * @param graph
+     * @return tools collection
+     */
+    private List<Tool> getStandardEdgeTools(Graph graph)
+    {
+        Edge[] edgeTypes = graph.getEdgePrototypes();
+        List<Tool> tools = new ArrayList<Tool>();
+        if (edgeTypes.length == 0)
+        {
+            return tools;
+        }
+        ResourceBundle graphResources = ResourceBundleUtils.getStringsResourceBundleForObject(graph);
+        for (int i = 0; i < edgeTypes.length; i++)
+        {
+            String label = graphResources.getString("edge" + (i + 1) + ".tooltip");
+            Tool aTool = new Tool(edgeTypes[i], label);
+            tools.add(aTool);
+        }
+        return tools;
+    }
+
+    /**
+     * Returns standard node tools associated to a graph
+     * 
+     * @param graph
+     * @return tools collection
+     */
+    private List<Tool> getStandardNodeTools(Graph graph)
+    {
+        Node[] nodeTypes = graph.getNodePrototypes();
+        List<Tool> tools = new ArrayList<Tool>();
+        Tool firstTool = getSelectionTool();
+        tools.add(firstTool);
+        if (nodeTypes.length == 0)
+        {
+            return tools;
+        }
+        ResourceBundle graphResources = ResourceBundleUtils.getStringsResourceBundleForObject(graph);
+        for (int i = 0; i < nodeTypes.length; i++)
+        {
+            String label = graphResources.getString("node" + (i + 1) + ".tooltip");
+            Tool aTool = new Tool(nodeTypes[i], label);
+            tools.add(aTool);
+        }
+        return tools;
+    }
+
+    /**
      * @param diagram tools
      * @return buttons representing tools
      */
@@ -212,55 +289,26 @@ public class SideToolPanel extends JPanel implements ISideToolPanel
         return buttons;
     }
 
-    /**
-     * Shows/Hides tools titles
+    /*
+     * (non-Javadoc)
      * 
-     * @param isVisible
+     * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideToolPanel#removeListener(uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.SideToolPanel.Listener)
      */
-    public void setToolsTitlesVisible(boolean isVisible)
+    public void removeListener(Listener listener)
     {
-        for (CustomToggleButton button : this.edgeButtons)
-        {
-            button.setTextVisible(isVisible);
-        }
-        for (CustomToggleButton button : this.nodeButtons)
-        {
-            button.setTextVisible(isVisible);
-        }
+        this.listeners.remove(listener);
     }
 
-    /**
-     * Performs button select
+    /*
+     * (non-Javadoc)
      * 
-     * @param selectedButton to be considered as selected
+     * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideToolPanel#reset()
      */
-    private void setSelectedButton(CustomToggleButton selectedButton)
+    public void reset()
     {
-        for (CustomToggleButton button : this.nodeButtons)
+        if (this.nodeButtons.size() > 0)
         {
-            if (button != selectedButton)
-            {
-                button.setSelected(false);
-            }
-            if (button == selectedButton)
-            {
-                button.setSelected(true);
-                int pos = this.nodeButtons.indexOf(button);
-                fireToolChangeEvent(nodeTools.get(pos));
-            }
-        }
-        for (CustomToggleButton button : this.edgeButtons)
-        {
-            if (button != selectedButton)
-            {
-                button.setSelected(false);
-            }
-            if (button == selectedButton)
-            {
-                button.setSelected(true);
-                int pos = this.edgeButtons.indexOf(button);
-                fireToolChangeEvent(edgeTools.get(pos));
-            }
+            setSelectedButton(this.nodeButtons.get(0));
         }
     }
 
@@ -298,7 +346,6 @@ public class SideToolPanel extends JPanel implements ISideToolPanel
             return;
         }
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -333,77 +380,56 @@ public class SideToolPanel extends JPanel implements ISideToolPanel
             return;
         }
     }
-
     /**
-     * Creates a panel that contains custom toggle buttons. Also sets mouse listeners.
+     * Performs button select
      * 
-     * @param buttons to be added to this panel
-     * @return JPanel
+     * @param selectedButton to be considered as selected
      */
-    private JPanel getButtonPanel(List<CustomToggleButton> buttons)
+    private void setSelectedButton(CustomToggleButton selectedButton)
     {
-        JPanel buttonPanel = new JPanel();
-        for (final CustomToggleButton button : buttons)
+        for (CustomToggleButton button : this.nodeButtons)
         {
-            button.addMouseListener(new MouseAdapter()
+            if (button != selectedButton)
             {
-                public void mouseClicked(MouseEvent arg0)
-                {
-                    setSelectedButton(button);
-                }
-            });
-            buttonPanel.add(button);
-        }
-
-        buttonPanel.setLayout(new GridLayout(0, 1));
-        buttonPanel.addMouseWheelListener(new MouseWheelListener()
-        {
-
-            public void mouseWheelMoved(MouseWheelEvent e)
-            {
-                int scroll = e.getUnitsToScroll();
-                if (scroll > 0)
-                {
-                    selectNextButton();
-                }
-                if (scroll < 0)
-                {
-                    selectPreviousButton();
-                }
+                button.setSelected(false);
             }
-
-        });
-        return buttonPanel;
+            if (button == selectedButton)
+            {
+                button.setSelected(true);
+                int pos = this.nodeButtons.indexOf(button);
+                fireToolChangeEvent(nodeTools.get(pos));
+            }
+        }
+        for (CustomToggleButton button : this.edgeButtons)
+        {
+            if (button != selectedButton)
+            {
+                button.setSelected(false);
+            }
+            if (button == selectedButton)
+            {
+                button.setSelected(true);
+                int pos = this.edgeButtons.indexOf(button);
+                fireToolChangeEvent(edgeTools.get(pos));
+            }
+        }
     }
-
     /**
-     * Remenbers selected tool and informs all listeners about this change
+     * Shows/Hides tools titles
      * 
-     * @param nodeOrEdge
+     * @param isVisible
      */
-    private void fireToolChangeEvent(Tool tool)
+    public void setToolsTitlesVisible(boolean isVisible)
     {
-        Iterator<Listener> it = this.listeners.iterator();
-        while (it.hasNext())
+        for (CustomToggleButton button : this.edgeButtons)
         {
-            Listener listener = it.next();
-            listener.toolSelectionChanged(tool);
+            button.setTextVisible(isVisible);
+        }
+        for (CustomToggleButton button : this.nodeButtons)
+        {
+            button.setTextVisible(isVisible);
         }
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideToolPanel#reset()
-     */
-    public void reset()
-    {
-        if (this.nodeButtons.size() > 0)
-        {
-            setSelectedButton(this.nodeButtons.get(0));
-        }
-    }
-
     /**
      * Listener to be implmenented and registered by each class that needs to know toolbar actions
      * 
@@ -421,31 +447,5 @@ public class SideToolPanel extends JPanel implements ISideToolPanel
         void toolSelectionChanged(Tool selectedTool);
 
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideToolPanel#addListener(uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.SideToolPanel.Listener)
-     */
-    public void addListener(Listener listener)
-    {
-        this.listeners.add(listener);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.ISideToolPanel#removeListener(uk.ac.sheffield.dcs.smdStudio.framework.gui.sidebar.SideToolPanel.Listener)
-     */
-    public void removeListener(Listener listener)
-    {
-        this.listeners.remove(listener);
-    }
-
-    private List<Listener> listeners = new ArrayList<Listener>();
-    private List<Tool> nodeTools;
-    private List<Tool> edgeTools;
-    private List<CustomToggleButton> nodeButtons;
-    private List<CustomToggleButton> edgeButtons;
 
 }
