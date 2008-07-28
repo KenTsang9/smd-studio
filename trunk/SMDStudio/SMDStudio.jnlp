@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- JNLP File for launching SMD Studio via Java Web Start -->
+<jnlp
+  spec="1.0+"
+  codebase="http://smd-studio.googlecode.com/files"
+  href="SMDStudio.jnlp">
+  <information>
+    <title>SMD Studio</title>
+    <vendor>Aria Dorri</vendor>
+    <homepage href="http://code.google.com/p/smd-studio/"/>
+    <icon href="http://code.google.com/p/smd-studio/source/browse/trunk/SMDStudio/src/main/resources/icons/other/smd-studio.png"/>
+    <offline-allowed/>
+  </information>
+  <security>
+    <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.6+"/>
+    <jar href="SMD%20Studio%20v1.0.jar"/>
+    <property name="apple.laf.useScreenMenuBar" value="true"/>
+    <property name="startedWithWebStart" value="true"/>
+  </resources>
+  <application-desc main-class="uk.ac.sheffield.dcs.smdStudio.UMLEditor"/>
+</jnlp>
+
