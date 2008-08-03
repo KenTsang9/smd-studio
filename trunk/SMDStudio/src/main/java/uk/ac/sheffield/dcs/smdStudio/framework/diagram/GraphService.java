@@ -42,22 +42,12 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import uk.ac.sheffield.dcs.smdStudio.UMLEditor;
 import uk.ac.sheffield.dcs.smdStudio.framework.file.CustomPersistenceDelegate;
-import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
 import uk.ac.sheffield.dcs.smdStudio.framework.util.ClipboardPipe;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.common.ImageNode;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph;
-
 
 public class GraphService {
 
@@ -140,63 +130,6 @@ public class GraphService {
 	}
 
 	/**
-	 * Auteur : a.depellegrin<br>
-	 * D�finition : Exports class diagram graph to xmi <br>
-	 * 
-	 * @param graph
-	 *            to export
-	 * @param out
-	 *            to write result
-	 */
-	public static void exportToXMI(Graph graph, OutputStream out) {
-		if (!(graph instanceof SoftwareModulesDiagramGraph)) {
-			// Only exports class diagrams
-			return;
-		}
-		try {
-			// Gets xsl files
-			ResourceBundle fileResourceBundle = ResourceBundle.getBundle(
-					ResourceBundleConstant.FILE_STRINGS, Locale.getDefault());
-			URL xslResource1 = GraphService.class
-					.getResource(fileResourceBundle
-							.getString("files.xmi.step1.xsl"));
-			URL xslResource2 = GraphService.class
-					.getResource(fileResourceBundle
-							.getString("files.xmi.step2.xsl"));
-			// Converts graph to Violet's XML
-			ByteArrayOutputStream graphOut = new ByteArrayOutputStream();
-			GraphService.write(graph, graphOut);
-			ByteArrayInputStream graphIn = new ByteArrayInputStream(graphOut
-					.toByteArray());
-			// XSL transform - step 1
-			ByteArrayOutputStream xmiOut = new ByteArrayOutputStream();
-			InputStream xslResource1InputStream = xslResource1.openStream();
-			TransformerFactory factory = TransformerFactory.newInstance();
-			Transformer transformer = factory.newTransformer(new StreamSource(
-					xslResource1InputStream));
-			transformer.transform(new StreamSource(graphIn), new StreamResult(
-					xmiOut));
-			// XSL transform - step 2
-			ByteArrayInputStream xmiIn = new ByteArrayInputStream(xmiOut
-					.toByteArray());
-			InputStream xslResource2InputStream = xslResource2.openStream();
-			transformer = factory.newTransformer(new StreamSource(
-					xslResource2InputStream));
-			transformer.transform(new StreamSource(xmiIn),
-					new StreamResult(out));
-			// Closes unused streams
-			xslResource1InputStream.close();
-			xslResource2InputStream.close();
-			graphOut.close();
-			graphIn.close();
-			xmiOut.close();
-			xmiIn.close();
-		} catch (Exception e) {
-			// Well... we tried!
-		}
-	}
-
-	/**
 	 * Writes the given graph in an outputstream. We use long-term bean
 	 * persistence to save the program data. See
 	 * http://java.sun.com/products/jfc/tsc/articles/persistence4/index.html for
@@ -215,7 +148,7 @@ public class GraphService {
 		encoder.close();
 		if (pcl != null)
 			Thread.currentThread().setContextClassLoader(cl); // TODO: Is this
-																// necessary?
+		// necessary?
 	}
 
 	/**

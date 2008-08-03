@@ -157,21 +157,7 @@ public abstract class FileService {
 	public static String getXMLFileExtension() {
 		return FileService.getFileExtension("xml");
 	}
-
-	/**
-	 * @return the extension filter for image export
-	 */
-	public static ExtensionFilter getXMIExtensionFilter() {
-		return FileService.getExtensionFilter("xmi");
-	}
-
-	/**
-	 * @return the string representation of file extension for xmi export
-	 */
-	public static String getXMIFileExtension() {
-		return FileService.getFileExtension("xmi");
-	}
-
+	
 	/**
 	 * @return the extension filter for type
 	 * @param type

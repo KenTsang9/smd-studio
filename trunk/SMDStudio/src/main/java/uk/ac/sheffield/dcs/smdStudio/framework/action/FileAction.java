@@ -61,7 +61,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.PrintPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.menu.FileMenu;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceBundleConstant;
-import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph;
 
 /**
  * This class concentrates actions that belong to the file menu
@@ -397,44 +396,6 @@ public class FileAction {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	/**
-	 * Exports given diagram to xmi format.
-	 * 
-	 * @param diagramPanel
-	 * @param fileChooserService
-	 */
-	public void exportToXMI(DiagramPanel diagramPanel,
-			FileChooserService fileChooserService) {
-		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
-				|| diagramPanel.getGraphPanel().getGraph() == null)
-			return;
-		Graph graph = diagramPanel.getGraphPanel().getGraph();
-		if (graph instanceof SoftwareModulesDiagramGraph) {
-			DialogFactory.getInstance().showErrorDialog(
-					this.menuResourceBundle
-							.getString("dialog.export_to_xmi.error"));
-			return;
-		}
-		try {
-			String xmiExtension = FileService.getXMIFileExtension();
-			ExtensionFilter extensionFilter = FileService
-					.getExtensionFilter(diagramPanel.getGraphPanel().getGraph());
-			ExtensionFilter exportFilter = FileService.getXMIExtensionFilter();
-			FileSaverHandler save = fileChooserService.save(null, diagramPanel
-					.getFilePath(), exportFilter, extensionFilter
-					.getExtensions()[0], xmiExtension);
-			OutputStream out = save.getOutputStream();
-			if (out != null) {
-				GraphService.exportToXMI(graph, out);
-				out.close();
-			}
-		} catch (Exception e) {
-			// Well, we tried...
-			e.printStackTrace();
-		}
-
 	}
 
 	/**
