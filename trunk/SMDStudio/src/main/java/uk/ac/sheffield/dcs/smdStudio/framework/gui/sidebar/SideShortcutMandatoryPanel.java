@@ -41,7 +41,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.gui.theme.ThemeManager;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceFactory;
 import uk.ac.sheffield.dcs.smdStudio.framework.swingextension.IconButtonUI;
 
-
 @SuppressWarnings("serial")
 public class SideShortcutMandatoryPanel extends JPanel {
 
@@ -99,30 +98,6 @@ public class SideShortcutMandatoryPanel extends JPanel {
 			}
 		});
 
-		JButton bCut = factory.createButton("cut");
-		bCut.setUI(new IconButtonUI(scalingValue));
-		bCut.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editAction.cut(diagramPanel);
-			}
-		});
-
-		JButton bCopy = factory.createButton("copy");
-		bCopy.setUI(new IconButtonUI(scalingValue));
-		bCopy.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editAction.copy(diagramPanel);
-			}
-		});
-
-		JButton bPaste = factory.createButton("paste");
-		bPaste.setUI(new IconButtonUI(scalingValue));
-		bPaste.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editAction.paste(diagramPanel);
-			}
-		});
-
 		this.toolsPanel = new JPanel();
 		this.toolsPanel.setOpaque(false);
 		this.toolsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -131,9 +106,6 @@ public class SideShortcutMandatoryPanel extends JPanel {
 		this.toolsPanel.add(bZoomOut);
 		this.toolsPanel.add(bDelete);
 		this.toolsPanel.add(bRedo);
-		this.toolsPanel.add(bCut);
-		this.toolsPanel.add(bCopy);
-		this.toolsPanel.add(bPaste);
 
 		if (!isFullSize) {
 			BoxLayout boxLayout = new BoxLayout(this.toolsPanel,
@@ -143,13 +115,7 @@ public class SideShortcutMandatoryPanel extends JPanel {
 			bZoomIn.setBorder(new EmptyBorder(5, 0, 5, 0));
 			bZoomOut.setBorder(new EmptyBorder(5, 0, 5, 0));
 			bDelete.setBorder(new EmptyBorder(5, 0, 5, 0));
-			bCut.setBorder(new EmptyBorder(5, 0, 5, 0));
-			bCopy.setBorder(new EmptyBorder(5, 0, 5, 0));
-			bPaste.setBorder(new EmptyBorder(5, 0, 5, 0));
 			this.toolsPanel.setLayout(boxLayout);
-			bCut.setVisible(false);
-			bCopy.setVisible(false);
-			bPaste.setVisible(false);
 		}
 
 		if (isFullSize) {
@@ -190,27 +156,6 @@ public class SideShortcutMandatoryPanel extends JPanel {
 			c5.gridx = 4;
 			c5.gridy = 0;
 			layout.setConstraints(bRedo, c5);
-
-			GridBagConstraints c6 = new GridBagConstraints();
-			c6.anchor = GridBagConstraints.CENTER;
-			c6.insets = new Insets(0, 0, 0, 15);
-			c6.gridx = 1;
-			c6.gridy = 1;
-			layout.setConstraints(bCut, c6);
-
-			GridBagConstraints c7 = new GridBagConstraints();
-			c7.insets = new Insets(0, 0, 0, 15);
-			c7.weightx = 1;
-			c7.gridx = 2;
-			c7.gridy = 1;
-			layout.setConstraints(bCopy, c7);
-
-			GridBagConstraints c8 = new GridBagConstraints();
-			c8.insets = new Insets(0, 0, 0, 15);
-			c8.weightx = 1;
-			c8.gridx = 3;
-			c8.gridy = 1;
-			layout.setConstraints(bPaste, c8);
 		}
 
 		setLayout(new FlowLayout(FlowLayout.CENTER));
