@@ -33,7 +33,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.gui.DiagramPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.EditorFrame;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceFactory;
 
-
 /**
  * Edit menu
  * 
@@ -41,216 +40,148 @@ import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceFactory;
  * 
  */
 @SuppressWarnings("serial")
-public class EditMenu extends JMenu
-{
+public class EditMenu extends JMenu {
 
-    /**
-     * Default constructor
-     * 
-     * @param editorFrame where is attached this menu
-     * @param factory for accessing to external resources
-     */
-    public EditMenu(EditorFrame editorFrame, ResourceFactory factory)
-    {
-        this.tabbedPane = editorFrame.getTabbedPane();
-        this.factory = factory;
-        this.editAction = new EditAction();
-        this.createMenu();
-    }
+	/**
+	 * Default constructor
+	 * 
+	 * @param editorFrame
+	 *            where is attached this menu
+	 * @param factory
+	 *            for accessing to external resources
+	 */
+	public EditMenu(EditorFrame editorFrame, ResourceFactory factory) {
+		this.tabbedPane = editorFrame.getTabbedPane();
+		this.factory = factory;
+		this.editAction = new EditAction();
+		this.createMenu();
+	}
 
-    /**
-     * Initializes menu
-     */
-    private void createMenu()
-    {
-        this.factory.configureMenu(this, "edit");
+	/**
+	 * Initialises menu
+	 */
+	private void createMenu() {
+		this.factory.configureMenu(this, "edit");
 
-        JMenuItem undo = factory.createMenuItem("edit.undo");
-        undo.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performUndo();
-            }
-        });
-        this.add(undo);
+		JMenuItem undo = factory.createMenuItem("edit.undo");
+		undo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				performUndo();
+			}
+		});
+		this.add(undo);
 
-        JMenuItem redo = factory.createMenuItem("edit.redo");
-        redo.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performRedo();
-            }
-        });
-        this.add(redo);
+		JMenuItem redo = factory.createMenuItem("edit.redo");
+		redo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				performRedo();
+			}
+		});
+		this.add(redo);
 
-        JMenuItem properties = factory.createMenuItem("edit.properties");
-        properties.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performEditProperties();
-            }
-        });
-        this.add(properties);
-        
-        JMenuItem cut = factory.createMenuItem("edit.cut");
-        cut.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performCut();
-            }
-        });
-        this.add(cut);
+		JMenuItem properties = factory.createMenuItem("edit.properties");
+		properties.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				performEditProperties();
+			}
+		});
+		this.add(properties);
 
-        JMenuItem copy = factory.createMenuItem("edit.copy");
-        copy.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performCopy();
-            }
-        });
-        this.add(copy);
-        
-        JMenuItem paste = factory.createMenuItem("edit.paste");
-        paste.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performPaste();
-            }
-        });
-        this.add(paste);        
+		JMenuItem delete = factory.createMenuItem("edit.delete");
+		delete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				performDelete();
+			}
+		});
+		this.add(delete);
 
-        JMenuItem delete = factory.createMenuItem("edit.delete");
-        delete.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performDelete();
-            }
-        });
-        this.add(delete);
+		JMenuItem selectNext = factory.createMenuItem("edit.select_next");
+		selectNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				performSelectNext();
+			}
+		});
+		this.add(selectNext);
 
-        JMenuItem selectNext = factory.createMenuItem("edit.select_next");
-        selectNext.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performSelectNext();
-            }
-        });
-        this.add(selectNext);
+		JMenuItem selectPrevious = factory
+				.createMenuItem("edit.select_previous");
+		selectPrevious.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				performSelectPrevious();
+			}
+		});
+		this.add(selectPrevious);
 
-        JMenuItem selectPrevious = factory.createMenuItem("edit.select_previous");
-        selectPrevious.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                performSelectPrevious();
-            }
-        });
-        this.add(selectPrevious);
+	}
 
-    }
+	/**
+	 * Performs undo action
+	 */
+	private void performUndo() {
+		DiagramPanel diagramPanel = (DiagramPanel) tabbedPane
+				.getSelectedComponent();
+		editAction.undo(diagramPanel);
+	}
 
-    /**
-     * Performs undo action
-     */
-    private void performUndo()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.undo(diagramPanel);
-    }
+	/**
+	 * Perfoems redo action
+	 */
+	private void performRedo() {
+		DiagramPanel diagramPanel = (DiagramPanel) tabbedPane
+				.getSelectedComponent();
+		editAction.redo(diagramPanel);
+	}
 
-    /**
-     * Perfoems redo action
-     */
-    private void performRedo()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.redo(diagramPanel);
-    }
+	/**
+	 * Performs edit selected item action
+	 */
+	private void performEditProperties() {
+		DiagramPanel diagramPanel = (DiagramPanel) tabbedPane
+				.getSelectedComponent();
+		editAction.edit(diagramPanel);
+	}
 
-    /**
-     * Performs edit selected item action
-     */
-    private void performEditProperties()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.edit(diagramPanel);
-    }
+	/**
+	 * Performs delete selected item action
+	 */
+	private void performDelete() {
+		DiagramPanel diagramPanel = (DiagramPanel) tabbedPane
+				.getSelectedComponent();
+		editAction.delete(diagramPanel);
+	}
 
-    /**
-     * Performs cut selected item action
-     */
-    private void performCut()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.cut(diagramPanel);
-    }
+	/**
+	 * Performs select next item on diagram panel
+	 */
+	private void performSelectNext() {
+		DiagramPanel diagramPanel = (DiagramPanel) tabbedPane
+				.getSelectedComponent();
+		editAction.selectNext(diagramPanel);
+	}
 
-    /**
-     * Performs copy selected item action
-     */
-    private void performCopy()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.copy(diagramPanel);
-    }
+	/**
+	 * Performs select previous item on diagram panel
+	 */
+	private void performSelectPrevious() {
+		DiagramPanel diagramPanel = (DiagramPanel) tabbedPane
+				.getSelectedComponent();
+		editAction.selectPrevious(diagramPanel);
+	}
 
-    /**
-     * Performs paste selected item action
-     */
-    private void performPaste()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.paste(diagramPanel);
-    }
+	/**
+	 * REeource factory to acces to external ressources such as icons, string
+	 * labels...
+	 */
+	private ResourceFactory factory;
 
-    /**
-     * Performs delete selected item action
-     */
-    private void performDelete()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.delete(diagramPanel);
-    }
-    
-    /**
-     * Performs select next item on diagram panel
-     */
-    private void performSelectNext()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.selectNext(diagramPanel);
-    }
+	/**
+	 * Tabbed pane that contaisn all diagrams
+	 */
+	private JTabbedPane tabbedPane;
 
-    /**
-     * Performs select previous item on diagram panel
-     */
-    private void performSelectPrevious()
-    {
-        DiagramPanel diagramPanel = (DiagramPanel) tabbedPane.getSelectedComponent();
-        editAction.selectPrevious(diagramPanel);
-    }
-
-    /**
-     * REeource factory to acces to external ressources such as icons, string labels...
-     */
-    private ResourceFactory factory;
-
-    /**
-     * Tabbed pane that contaisn all diagrams
-     */
-    private JTabbedPane tabbedPane;
-
-    /**
-     * Edit actions
-     */
-    private EditAction editAction;
+	/**
+	 * Edit actions
+	 */
+	private EditAction editAction;
 
 }

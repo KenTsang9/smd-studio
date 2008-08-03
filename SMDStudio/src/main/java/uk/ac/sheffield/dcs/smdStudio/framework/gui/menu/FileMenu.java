@@ -124,13 +124,16 @@ public class FileMenu extends JMenu {
 			}
 		});
 
-		JMenuItem fileExportToClipBoard = this.menuFactory
-				.createMenuItem("file.export_to_clipboard");
-		fileExportToClipBoard.addActionListener(new ActionListener() {
+		this.add(fileExportItem);
+
+		JMenuItem fileExportAsXML = this.menuFactory
+				.createMenuItem("file.export_as_xml");
+		fileExportAsXML.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				performExportToClipBoard();
+				performExportAsXML();
 			}
 		});
+		this.add(fileExportAsXML);
 
 		JMenuItem fileExportToXMI = this.menuFactory
 				.createMenuItem("file.export_to_xmi");
@@ -156,14 +159,6 @@ public class FileMenu extends JMenu {
 			}
 		});
 
-		JMenu fileExportMenu = this.menuFactory.createMenu("file.export");
-		fileExportMenu.add(fileExportItem);
-		fileExportMenu.add(fileExportToClipBoard);
-		// fileExportMenu.add(fileExportToXMI);
-		// fileExportMenu.add(fileExportToJava);
-		// fileExportMenu.add(fileExportToPython);
-		this.add(fileExportMenu);
-
 		JMenuItem filePrintItem = this.menuFactory.createMenuItem("file.print");
 		filePrintItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -184,7 +179,7 @@ public class FileMenu extends JMenu {
 			fileOpenItem.setEnabled(false);
 			fileSaveAsItem.setEnabled(false);
 			fileExportItem.setEnabled(false);
-			fileExportToClipBoard.setEnabled(false);
+			fileExportAsXML.setEnabled(false);
 			filePrintItem.setEnabled(false);
 			fileExitItem.setEnabled(false);
 		}
@@ -335,13 +330,13 @@ public class FileMenu extends JMenu {
 	}
 
 	/**
-	 * Performs export to clipboard action
+	 * Performs export to XMI file
 	 */
-	private void performExportToClipBoard() {
+	private void performExportAsXML() {
 		DiagramPanel diagramPanel = (DiagramPanel) editorFrame.getTabbedPane()
 				.getSelectedComponent();
 		if (diagramPanel != null) {
-			fileAction.exportToClipboard(diagramPanel);
+			fileAction.exportAsXML(diagramPanel, fileChooserService);
 		}
 	}
 

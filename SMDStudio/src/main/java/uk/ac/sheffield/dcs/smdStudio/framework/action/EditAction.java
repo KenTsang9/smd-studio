@@ -30,114 +30,83 @@ import uk.ac.sheffield.dcs.smdStudio.framework.gui.GraphPanel;
  * @author Alexandre de Pellegrin
  * 
  */
-public class EditAction
-{
+public class EditAction {
 
-    /**
-     * Undo last diagram change
-     * 
-     * @param diagramPanel
-     */
-    public void undo(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.undo();
-    }
+	/**
+	 * Undo last diagram change
+	 * 
+	 * @param diagramPanel
+	 */
+	public void undo(DiagramPanel diagramPanel) {
+		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
+				|| diagramPanel.getGraphPanel().getGraph() == null)
+			return;
+		GraphPanel panel = diagramPanel.getGraphPanel();
+		panel.undo();
+	}
 
-    /**
-     * Redo undone diagram changes
-     * 
-     * @param diagramPanel
-     */
-    public void redo(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.redo();
-    }
+	/**
+	 * Redo undone diagram changes
+	 * 
+	 * @param diagramPanel
+	 */
+	public void redo(DiagramPanel diagramPanel) {
+		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
+				|| diagramPanel.getGraphPanel().getGraph() == null)
+			return;
+		GraphPanel panel = diagramPanel.getGraphPanel();
+		panel.redo();
+	}
 
-    /**
-     * Edits selected item
-     * 
-     * @param diagramPanel
-     */
-    public void edit(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.editSelected();
-    }
+	/**
+	 * Edits selected item
+	 * 
+	 * @param diagramPanel
+	 */
+	public void edit(DiagramPanel diagramPanel) {
+		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
+				|| diagramPanel.getGraphPanel().getGraph() == null)
+			return;
+		GraphPanel panel = diagramPanel.getGraphPanel();
+		panel.editSelected();
+	}
 
-    /**
-     * Cuts selected item
-     * 
-     * @param diagramPanel
-     */
-    public void cut(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.cut();        
-    }    
+	/**
+	 * Deletes selected item
+	 * 
+	 * @param diagramPanel
+	 */
+	public void delete(DiagramPanel diagramPanel) {
+		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
+				|| diagramPanel.getGraphPanel().getGraph() == null)
+			return;
+		GraphPanel panel = diagramPanel.getGraphPanel();
+		panel.removeSelected();
+	}
 
-    /**
-     * Copies selected item
-     * 
-     * @param diagramPanel
-     */
-    public void copy(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.copy();        
-    }    
-    
-    /**
-     * Pastes selected item
-     * 
-     * @param diagramPanel
-     */
-    public void paste(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.paste();        
-    }    
-    
-    /**
-     * Deletes selected item
-     * 
-     * @param diagramPanel
-     */
-    public void delete(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.removeSelected();
-    }
+	/**
+	 * Selects next item
+	 * 
+	 * @param diagramPanel
+	 */
+	public void selectNext(DiagramPanel diagramPanel) {
+		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
+				|| diagramPanel.getGraphPanel().getGraph() == null)
+			return;
+		GraphPanel panel = diagramPanel.getGraphPanel();
+		panel.selectNext(1);
+	}
 
-    /**
-     * Selects next item
-     * 
-     * @param diagramPanel
-     */
-    public void selectNext(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.selectNext(1);
-    }
-
-    /**
-     * Selects previous item
-     * 
-     * @param diagramPanel
-     */
-    public void selectPrevious(DiagramPanel diagramPanel)
-    {
-        if (diagramPanel == null || diagramPanel.getGraphPanel() == null || diagramPanel.getGraphPanel().getGraph() == null) return;
-        GraphPanel panel = diagramPanel.getGraphPanel();
-        panel.selectNext(-1);
-    }
+	/**
+	 * Selects previous item
+	 * 
+	 * @param diagramPanel
+	 */
+	public void selectPrevious(DiagramPanel diagramPanel) {
+		if (diagramPanel == null || diagramPanel.getGraphPanel() == null
+				|| diagramPanel.getGraphPanel().getGraph() == null)
+			return;
+		GraphPanel panel = diagramPanel.getGraphPanel();
+		panel.selectNext(-1);
+	}
 }
