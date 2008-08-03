@@ -79,19 +79,20 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	public static void setPersistenceDelegate(Encoder encoder) {
 		encoder.setPersistenceDelegate(AbstractGraph.class,
 				new DefaultPersistenceDelegate() {
+					@Override
 					protected void initialize(Class<?> type,
 							Object oldInstance, Object newInstance, Encoder out) {
 						super.initialize(type, oldInstance, newInstance, out);
 						AbstractGraph g = (AbstractGraph) oldInstance;
 
 						for (int i = 0; i < g.nodes.size(); i++) {
-							Node n = (Node) g.nodes.get(i);
+							Node n = g.nodes.get(i);
 							Point2D p = n.getLocation();
 							out.writeStatement(new Statement(oldInstance,
 									"addNode", new Object[] { n, p }));
 						}
 						for (int i = 0; i < g.edges.size(); i++) {
-							Edge e = (Edge) g.edges.get(i);
+							Edge e = g.edges.get(i);
 							out.writeStatement(new Statement(oldInstance,
 									"connect", new Object[] { e, e.getStart(),
 											e.getEnd() }));
@@ -118,9 +119,9 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.sheffield.dcs.smdStudio.framework.diagram.IGraph#addEdgeAtPoints
-	 * (com.horstmann .violet.framework.diagram.Edge, java.awt.geom.Point2D,
-	 * java.awt.geom.Point2D)
+	 * uk.ac.sheffield.dcs.smdStudio.framework.diagram.Graph#addEdgeAtPoints
+	 * (uk.ac.sheffield.dcs.smdStudio.framework.diagram.Edge,
+	 * java.awt.geom.Point2D, java.awt.geom.Point2D)
 	 */
 	public boolean addEdgeAtPoints(Edge e, Point2D p1, Point2D p2) {
 		Node n1 = findNode(p1);
@@ -377,7 +378,7 @@ public abstract class AbstractGraph implements Serializable, Cloneable, Graph {
 		}
 
 		for (int i = 0; i < edges.size(); i++) {
-			Edge e = (Edge) edges.get(i);
+			Edge e = edges.get(i);
 			e.draw(g2);
 		}
 		// Special nodes are always drawn upon other elements

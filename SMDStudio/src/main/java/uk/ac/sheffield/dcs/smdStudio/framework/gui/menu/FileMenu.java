@@ -36,7 +36,6 @@ import uk.ac.sheffield.dcs.smdStudio.framework.file.FileChooserServiceFactory;
 import uk.ac.sheffield.dcs.smdStudio.framework.file.FileService;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.DiagramPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.gui.EditorFrame;
-import uk.ac.sheffield.dcs.smdStudio.framework.gui.IDiagramPanel;
 import uk.ac.sheffield.dcs.smdStudio.framework.resources.ResourceFactory;
 import uk.ac.sheffield.dcs.smdStudio.product.diagram.smd.SoftwareModulesDiagramGraph;
 
@@ -124,8 +123,6 @@ public class FileMenu extends JMenu {
 			}
 		});
 
-		this.add(fileExportItem);
-
 		JMenuItem fileExportAsXML = this.menuFactory
 				.createMenuItem("file.export_as_xml");
 		fileExportAsXML.addActionListener(new ActionListener() {
@@ -133,31 +130,11 @@ public class FileMenu extends JMenu {
 				performExportAsXML();
 			}
 		});
-		this.add(fileExportAsXML);
 
-		JMenuItem fileExportToXMI = this.menuFactory
-				.createMenuItem("file.export_to_xmi");
-		fileExportToXMI.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				performExportToXMI();
-			}
-		});
-
-		JMenuItem fileExportToJava = this.menuFactory
-				.createMenuItem("file.export_to_java");
-		fileExportToJava.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				performExportToJava();
-			}
-		});
-
-		JMenuItem fileExportToPython = this.menuFactory
-				.createMenuItem("file.export_to_python");
-		fileExportToPython.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				performExportToPython();
-			}
-		});
+		JMenu fileExportMenu = this.menuFactory.createMenu("file.export");
+		fileExportMenu.add(fileExportItem);
+		fileExportMenu.add(fileExportAsXML);
+		this.add(fileExportMenu);
 
 		JMenuItem filePrintItem = this.menuFactory.createMenuItem("file.print");
 		filePrintItem.addActionListener(new ActionListener() {
@@ -337,37 +314,6 @@ public class FileMenu extends JMenu {
 				.getSelectedComponent();
 		if (diagramPanel != null) {
 			fileAction.exportAsXML(diagramPanel, fileChooserService);
-		}
-	}
-
-	/**
-	 * Performs export to XMI file
-	 */
-	private void performExportToXMI() {
-		DiagramPanel diagramPanel = (DiagramPanel) editorFrame.getTabbedPane()
-				.getSelectedComponent();
-		if (diagramPanel != null) {
-			fileAction.exportToXMI(diagramPanel, fileChooserService);
-		}
-	}
-
-	/**
-	 * Performs export to Java code
-	 */
-	private void performExportToJava() {
-		IDiagramPanel diagramPanel = (IDiagramPanel) editorFrame
-				.getTabbedPane().getSelectedComponent();
-		if (diagramPanel != null) {
-		}
-	}
-
-	/**
-	 * Performs export to Python code
-	 */
-	private void performExportToPython() {
-		IDiagramPanel diagramPanel = (IDiagramPanel) editorFrame
-				.getTabbedPane().getSelectedComponent();
-		if (diagramPanel != null) {
 		}
 	}
 
