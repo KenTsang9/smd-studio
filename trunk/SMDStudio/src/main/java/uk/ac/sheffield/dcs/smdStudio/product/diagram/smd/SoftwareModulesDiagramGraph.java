@@ -72,7 +72,7 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 	public boolean addEdgeAtPoints(Edge e, Point2D p1, Point2D p2) {
 		Node n1 = findNode(p1);
 		Node n2 = findNode(p2);
-		if (n1 == n2 || n1 == null || n2 == null) {
+		if (n1 == null || n2 == null) {
 			return false;
 		}
 		if (e instanceof NoteEdge) {

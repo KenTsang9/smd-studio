@@ -110,9 +110,13 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 		Direction d2;
 
 		if (getStart() == getEnd()) {
-			angle = 60;
-			d1 = Direction.EAST.turn(-30);
-			d2 = Direction.EAST.turn(30);
+			angle = -80;
+			Rectangle2D node = getStart().getBounds();
+			Point2D p = new Point2D.Double(node.getX() ,
+					node.getY()+node.getHeight()-30);
+			Point2D q = new Point2D.Double(node.getX() + 30, node
+					.getY()+node.getHeight());
+			return new Line2D.Double(p, q);
 		} else {
 			angle = 10;
 			Rectangle2D start = getStart().getBounds();
@@ -227,6 +231,10 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 
 	@Override
 	public void connect(Node s, Node e) {
+		if (e.getParent() != s.getParent()) {
+			throw new IllegalStateException(
+					"Module Transition can be done between peer nodes only");
+		}
 		if (e.getParent() != null && e.getParent() instanceof ComplexModuleNode) {
 			this.parent = (ComplexModuleNode) e.getParent();
 			parent.addEdge(this);
