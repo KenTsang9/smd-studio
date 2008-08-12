@@ -64,9 +64,9 @@ public class ComplexModuleNode extends RectangularNode implements
 
 	private static int DEFAULT_WIDTH = 100;
 
-	private static final int DEFAULT_XGAP = 5;
+	private static final int DEFAULT_XGAP = 50;
 
-	private static final int DEFAULT_YGAP = 5;
+	private static final int DEFAULT_YGAP = 50;
 
 	private static JLabel nameLabel = new JLabel();
 
