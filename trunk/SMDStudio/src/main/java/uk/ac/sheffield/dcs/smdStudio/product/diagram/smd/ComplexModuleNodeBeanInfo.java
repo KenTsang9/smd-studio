@@ -42,8 +42,12 @@ public class ComplexModuleNodeBeanInfo extends SimpleBeanInfo {
 			PropertyDescriptor descriptionDescriptor = new PropertyDescriptor(
 					"description", ComplexModuleNode.class);
 			descriptionDescriptor.setValue("priority", new Integer(2));
+			PropertyDescriptor idDescriptor = new PropertyDescriptor("id",
+					ComplexModuleNode.class, "getSMDId", "setSMDId");
+			idDescriptor.setValue("priority", new Integer(3));
+			idDescriptor.setHidden(true);
 			return new PropertyDescriptor[] { nameDescriptor,
-					descriptionDescriptor, };
+					descriptionDescriptor, idDescriptor, };
 		} catch (IntrospectionException exception) {
 			return null;
 		}
