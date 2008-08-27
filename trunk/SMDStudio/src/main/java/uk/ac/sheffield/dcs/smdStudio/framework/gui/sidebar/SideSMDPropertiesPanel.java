@@ -89,7 +89,7 @@ public class SideSMDPropertiesPanel extends JPanel {
 		initTeamQuality(bundle);
 		JLabel label = new JLabel(bundle.getString("teamQuality.text"));
 		label.setFont(new Font(label.getFont().getName(), Font.BOLD, label
-				.getFont().getSize() + 5));
+				.getFont().getSize() + 3));
 		// label.setForeground(Color.gray);
 
 		GridBagConstraints c = new GridBagConstraints();
@@ -112,15 +112,18 @@ public class SideSMDPropertiesPanel extends JPanel {
 
 		initTrainingCost();
 		JLabel label = new JLabel(bundle.getString("trainingCost.text"));
+		label.setToolTipText(bundle.getString("trainingCost.tooltip"));
 		label.setFont(new Font(label.getFont().getName(), Font.BOLD, label
-				.getFont().getSize() + 5));
+				.getFont().getSize() + 3));
 		// label.setForeground(Color.gray);
 
 		GridBagConstraints c = new GridBagConstraints();
+//		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.weightx = 0.1;
 		c.fill = GridBagConstraints.BOTH;
 		trainingPanel.add(label, c);
 
+		trainingCost.setToolTipText(bundle.getString("trainingCost.tooltip"));
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 10, 0, 0);
 		trainingPanel.add(trainingCost, c);

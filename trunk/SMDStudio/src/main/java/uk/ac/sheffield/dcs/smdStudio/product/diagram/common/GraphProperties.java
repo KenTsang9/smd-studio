@@ -47,7 +47,7 @@ import uk.ac.sheffield.dcs.smdStudio.framework.resources.XMLResourceBoundle;
 @SuppressWarnings("serial")
 public class GraphProperties extends RectangularNode implements ExportableAsXML {
 
-	private static Color DEFAULT_COLOR = new Color(151, 168, 220);
+	private static Color DEFAULT_COLOR = new Color(192, 206, 237);
 
 	private static int DEFAULT_HEIGHT = 100;
 
@@ -149,7 +149,7 @@ public class GraphProperties extends RectangularNode implements ExportableAsXML 
 	private String formatCostText() {
 		String label = getGeneralGraphResourceBundle().getString(
 				"graph.totalCost.text");
-		return "<font face=\"comic sans ms\" size=\"7\" color=\"red\">" + label
+		return "<font face=\"comic sans ms\" size=\"6\" color=\"red\">" + label
 				+ ": " + calculateTotalCost() + "</font>";
 	}
 
@@ -175,7 +175,7 @@ public class GraphProperties extends RectangularNode implements ExportableAsXML 
 	}
 
 	private String getLabelValueFormatedText(String label, String value) {
-		return "<font face=\"comic sans ms\">" + label + ": " + value
+		return "<font face=\"comic sans ms\" size=\"4\" >" + label + ": " + value
 				+ "</font>";
 	}
 
@@ -260,7 +260,7 @@ public class GraphProperties extends RectangularNode implements ExportableAsXML 
 		String sTotalCost = formatCostText();
 		changed = changed ? true : totalCostText.equals(sTotalCost);
 		totalCostText = sTotalCost;
-		text.setText(sTotalCost + "<br/><br/>" + sTeamQuality + "<br/><br/>"
+		text.setText(sTotalCost + "<br/>" + sTeamQuality + "<br/>"
 				+ sTrainingCost);
 		if (changed && getGraph() != null) {
 			getGraph().repaint();
