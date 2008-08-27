@@ -16,7 +16,7 @@
   </security>
   <resources>
     <j2se version="1.6+"/>
-    <jar href="SMD%20Studio%20v1.03.jar"/>
+    <jar href="SMD%20Studio%20v1.04.jar"/>
     <property name="apple.laf.useScreenMenuBar" value="true"/>
     <property name="startedWithWebStart" value="true"/>
   </resources>
