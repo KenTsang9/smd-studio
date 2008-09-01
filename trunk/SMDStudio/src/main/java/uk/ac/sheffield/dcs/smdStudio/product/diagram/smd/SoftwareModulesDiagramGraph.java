@@ -80,18 +80,15 @@ public class SoftwareModulesDiagramGraph extends AbstractGraph {
 				return false;
 			}
 		} else {
-			if (n1.getParent() != n2.getParent()) {
-				return false;
-			}
 			if (n1 instanceof ComplexModuleNode) {
 				ComplexModuleNode node = (ComplexModuleNode) n1;
-				if (node.getChildren().contains(n2)) {
+				if (node.contains(n2)) {
 					return false;
 				}
 			}
 			if (n2 instanceof ComplexModuleNode) {
 				ComplexModuleNode node = (ComplexModuleNode) n2;
-				if (node.getChildren().contains(n1)) {
+				if (node.contains(n1)) {
 					return false;
 				}
 			}

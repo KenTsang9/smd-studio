@@ -84,11 +84,9 @@ public class ComplexModuleNode extends RectangularNode implements
 
 	private transient Rectangle2D top;
 
-	private Set<ModuleTransitionEdge> edges = new HashSet<ModuleTransitionEdge>();
-	
+	private Set<ModuleTransitionEdge> edges;
+
 	private int smdId;
-	
-	
 
 	public int getSMDId() {
 		return smdId;
@@ -102,6 +100,7 @@ public class ComplexModuleNode extends RectangularNode implements
 	 * Construct a package node with a default size
 	 */
 	public ComplexModuleNode() {
+		edges = new HashSet<ModuleTransitionEdge>();
 		name = "";
 		description = new MultiLineString();
 		description.setJustification(MultiLineString.LEFT);
@@ -139,9 +138,11 @@ public class ComplexModuleNode extends RectangularNode implements
 	public ComplexModuleNode clone() {
 		ComplexModuleNode cloned = (ComplexModuleNode) super.clone();
 		cloned.description = description.clone();
-		top = (Rectangle2D) top.clone();
-		mid = (Rectangle2D) mid.clone();
-		bot = (Rectangle2D) bot.clone();
+		cloned.top = (Rectangle2D) top.clone();
+		cloned.mid = (Rectangle2D) mid.clone();
+		cloned.bot = (Rectangle2D) bot.clone();
+		cloned.edges = new HashSet<ModuleTransitionEdge>();
+		cloned.edges.addAll(edges);
 		return cloned;
 	}
 
@@ -358,5 +359,26 @@ public class ComplexModuleNode extends RectangularNode implements
 			}
 		}
 		return element;
+	}
+
+	public boolean contains(Node n) {
+		if (this.getChildren().contains(n)) {
+			return true;
+		}
+		for (Node child : this.getChildren()) {
+			if (child instanceof ComplexModuleNode) {
+				return ((ComplexModuleNode) child).contains(n);
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return this.getName();
 	}
 }

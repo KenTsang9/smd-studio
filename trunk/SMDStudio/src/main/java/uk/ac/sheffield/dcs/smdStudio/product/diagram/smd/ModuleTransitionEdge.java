@@ -28,11 +28,13 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import javax.swing.JLabel;
 
 import org.jdom.Element;
 
+import uk.ac.sheffield.dcs.smdStudio.framework.diagram.AbstractNode;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ArrowHead;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.Direction;
 import uk.ac.sheffield.dcs.smdStudio.framework.diagram.ExportableAsXML;
@@ -112,10 +114,10 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 		if (getStart() == getEnd()) {
 			angle = -80;
 			Rectangle2D node = getStart().getBounds();
-			Point2D p = new Point2D.Double(node.getX() ,
-					node.getY()+node.getHeight()-30);
-			Point2D q = new Point2D.Double(node.getX() + 30, node
-					.getY()+node.getHeight());
+			Point2D p = new Point2D.Double(node.getX(), node.getY()
+					+ node.getHeight() - 30);
+			Point2D q = new Point2D.Double(node.getX() + 30, node.getY()
+					+ node.getHeight());
 			return new Line2D.Double(p, q);
 		} else {
 			angle = 10;
@@ -231,15 +233,27 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 
 	@Override
 	public void connect(Node s, Node e) {
-		if (e.getParent() != s.getParent()) {
-			throw new IllegalStateException(
-					"Module Transition can be done between peer nodes only");
-		}
-		if (e.getParent() != null && e.getParent() instanceof ComplexModuleNode) {
-			this.parent = (ComplexModuleNode) e.getParent();
+		this.parent = findTransitionParent(s, e);
+		if (this.parent != null) {
 			parent.addEdge(this);
 		}
 		super.connect(s, e);
+	}
+
+	private ComplexModuleNode findTransitionParent(final Node s, final Node e) {
+		ComplexModuleNode parent = null;
+		List<Node> sAns = ((AbstractNode) s).getAncestors();
+		List<Node> eAns = ((AbstractNode) e).getAncestors();
+		for (Node ans : sAns) {
+			if (eAns.contains(ans)) {
+				if (ans != s && ans != e) {
+					if (parent == null || ans.getZ() > parent.getZ()) {
+						parent = (ComplexModuleNode) ans;
+					}
+				}
+			}
+		}
+		return parent;
 	}
 
 	public void remove() {
@@ -251,21 +265,33 @@ public class ModuleTransitionEdge extends ShapeEdge implements
 	@Override
 	public Element getAsXMLElement() {
 		Element element = new Element(RS.getElementName("element"));
+		
 		Element eStart = new Element(RS.getElementName("start"));
 		eStart.setText(String.valueOf(((SoftwareModuleDiagramObject) this
 				.getStart()).getSMDId()));
 		element.addContent(eStart);
+		
 		Element eEnd = new Element(RS.getElementName("end"));
 		eEnd.setText(String.valueOf(((SoftwareModuleDiagramObject) this
 				.getEnd()).getSMDId()));
 		element.addContent(eEnd);
+		
 		Element eCost = new Element(RS.getElementName("cost"));
 		eCost.setText(String.valueOf(cost));
 		element.addContent(eCost);
+		
 		Element eLabel = new Element(RS.getElementName("label"));
 		eLabel.setText(labelText);
 		element.addContent(eLabel);
+		
 		return element;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		return this.getLabel();
 	}
 
 }

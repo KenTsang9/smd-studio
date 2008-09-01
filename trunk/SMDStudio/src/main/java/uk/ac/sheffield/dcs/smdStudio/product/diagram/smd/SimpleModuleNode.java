@@ -118,8 +118,8 @@ public class SimpleModuleNode extends RectangularNode implements
 	public SimpleModuleNode clone() {
 		SimpleModuleNode cloned = (SimpleModuleNode) super.clone();
 		cloned.description = description.clone();
-		top = (Rectangle2D) top.clone();
-		mid = (Rectangle2D) mid.clone();
+		cloned.top = (Rectangle2D) top.clone();
+		cloned.mid = (Rectangle2D) mid.clone();
 		return cloned;
 	}
 
@@ -268,6 +268,13 @@ public class SimpleModuleNode extends RectangularNode implements
 		element.addContent(eName);
 		element.addContent(eDescription);
 		return element;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		return this.getName();
 	}
 
 }
