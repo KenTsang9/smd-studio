@@ -531,11 +531,11 @@ public class DiagramPanel extends JPanel implements IDiagramPanel {
 
 			private void process() {
 				setSaveNeeded(true);
+				getGraphPanel().doLayout();
 			}
 
 			public void propertyChangedOnNodeOrEdge(Graph g,
 					PropertyChangeEvent event) {
-				getGraphPanel().doLayout();
 				process();
 			}
 
