@@ -209,7 +209,8 @@ public class SimpleModuleNode extends RectangularNode implements
 		double midHeight = descriptionBounds.getHeight() == 0 ? DEFAULT_HEIGHT
 				- DEFAULT_COMPARTMENT_HEIGHT : Math.max(
 				DEFAULT_COMPARTMENT_HEIGHT, descriptionBounds.getHeight());
-		double topHeight = DEFAULT_COMPARTMENT_HEIGHT;
+		double topHeight = Math.max(DEFAULT_COMPARTMENT_HEIGHT, d.getHeight()
+				- 4 * NAME_GAP);
 
 		snapBounds(grid, Math.max(topWidth + DEFAULT_WIDTH - DEFAULT_TOP_WIDTH,
 				Math.max(DEFAULT_WIDTH, descriptionBounds.getWidth())),
