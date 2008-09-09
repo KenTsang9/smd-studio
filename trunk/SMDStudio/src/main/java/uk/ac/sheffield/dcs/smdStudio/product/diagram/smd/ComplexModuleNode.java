@@ -72,7 +72,7 @@ public class ComplexModuleNode extends RectangularNode implements
 
 	private static JLabel costLabel = new JLabel();
 
-	private static final int NAME_GAP = 3;
+	private static final int NAME_GAP = 4;
 
 	private transient Rectangle2D bot;
 
@@ -241,11 +241,11 @@ public class ComplexModuleNode extends RectangularNode implements
 		Dimension d = nameLabel.getPreferredSize();
 		double topWidth = Math.max(d.getWidth() + 2 * NAME_GAP,
 				DEFAULT_TOP_WIDTH);
-		double midHeight = Math.max(d.getHeight(), descriptionBounds
-				.getHeight());
+		double midHeight = descriptionBounds.getHeight();
 		double midwidth = Math.max(Math.max(d.getWidth(), descriptionBounds
 				.getWidth()), topWidth);
-		double topHeight = DEFAULT_COMPARTMENT_HEIGHT;
+		double topHeight = Math.max(DEFAULT_COMPARTMENT_HEIGHT, d.getHeight()
+				- 4 * NAME_GAP);
 
 		if (childBounds == null) // no children; leave (x,y) as is and place
 		// default rect below
